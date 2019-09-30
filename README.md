@@ -18,6 +18,4 @@ The 'edge' keyword connects two vertices with a line (in a certain color)<br>
 This is a first attempt to draw things in 3D space, so I hope to spend some more time refining everything<br>
 <p>
 Here's a screenshot:<br>
-![screenshot](/screenshot.png)
-
-
+![icosahedron](/screenshot.png)
