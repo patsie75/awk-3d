@@ -279,10 +279,11 @@ function stage7() {
 }
 
 function myTime() {
-  # /proc/uptime has more precision than strftime()
-  getline < "/proc/uptime"
-  close("/proc/uptime")
-  return($1)
+  # /proc/uptime has more precision than systime()
+  if ((getline < "/proc/uptime") > 0) {
+    close("/proc/uptime")
+    return($1)
+  } else return(systime())
 }
 
 ##
