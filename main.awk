@@ -17,6 +17,23 @@ function max(a,b) { return( (a>b) ? a : b ) }
 function min(a,b) { return( (a<b) ? a : b ) }
 function shortint(f) { return( int(sprintf("%.3f", f)) ) }
 
+# return number of frames in time interval
+function fps(f) {
+  f["frame"] ++
+  f["now"] = myTime()
+
+  if (f["interval"] == 0)
+    f["interval"] = 1
+
+  if ( (f["now"] - f["prev"]) >= f["interval"] ) {
+    f["fps"] = f["frame"] / (f["now"] - f["prev"])
+    f["prev"] = f["now"]
+    f["frame"] = 0
+  }
+
+  return( f["fps"] )
+}
+
 ## initialize and clear canvas
 function init(scr, width, height) {
   scr["width"] = width
@@ -420,6 +437,9 @@ BEGIN {
     # print object vertices information
     #for (v=1; v<=obj["obj"]["vertices"]; v++)
     #  printf("#%3d xpos[%d]=%7.3f   ypos[%d]=%7.3f   zpos[%d]=%7.3f\n", framenr, v, xpos[v], v, ypos[v], v, zpos[v])
+
+    fps(f)
+    printf("\033[H%.1fFPS", f["fps"])
 
 #    system("sleep 0.01")
   }
