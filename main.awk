@@ -203,34 +203,36 @@ function box(scr, x1,y1,x2,y2, col,   i, tmp) {
 
 }
 
-function triangle() {
+function triangle(src, x1,y1, x2,y2, x3,y3, col) {
+  line(scr, x1,y1, x2,y2, col)
+  line(scr, x2,y2, x3,y3, col)
+  line(scr, x3,y3, x1,y1, col)
 }
 
-function hline(scr, x1,y1, len, col,   i) {
+function hline(scr, x1,y1, len, col, dbg,   i) {
   l = int(x1+len)
-printf("hline(): (%3d,%3d),%2d -- [%6.3f,%6.3f],%6.3f (%d)\n", x1,y1,len, x1,y1,len, col)
+#if (dbg) printf("hline(): (%3d,%3d),%2d -- [%6.3f,%6.3f],%6.3f (%d)\n", x1,y1,len, x1,y1,len, col)
   for (i=x1; i<l; i++)
     pixel(scr, i,y1, col)
 }
 
-function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type,   i, d1,d2,d3, sx,ex) {
-
+function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type, dbg,   i, d1,d2,d3, sx,ex) {
   # y1 < y2 < y3
-printf("(%d,%d), (%d,%d), (%d,%d)\n", x1,y1, x2,y2, x3,y3)
+#if (dbg) printf("(%d,%d), (%d,%d), (%d,%d)\n", x1,y1, x2,y2, x3,y3)
 
   if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
   if (y3 < y2) { i=y2; y2=y3; y3=i; i=x2; x2=x3; x3=i }
   if (y3 < y1) { i=y1; y1=y3; y3=i; i=x1; x1=x3; x3=i }
   if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
 
-printf("(%d,%d), (%d,%d), (%d,%d)\n", x1,y1, x2,y2, x3,y3)
+#if (dbg) printf("(%d,%d), (%d,%d), (%d,%d)\n", x1,y1, x2,y2, x3,y3)
 
   # get delta/slopes
   i = y2-y1; d1 = i ? (x2-x1) / i : 0
   i = y3-y2; d2 = i ? (x3-x2) / i : 0
   i = y1-y3; d3 = i ? (x1-x3) / i : 0
 
-printf("d: %.4f, %.4f, %.4f\n", d1, d2, d3)
+#if (dbg) printf("d: %.4f, %.4f, %.4f\n", d1, d2, d3)
 
   # upper triangle
   for (i=y1; i<y2; i++) {
@@ -238,11 +240,13 @@ printf("d: %.4f, %.4f, %.4f\n", d1, d2, d3)
     ex = x1 + (i-y1) * d1
 
     if (sx < ex) {
-      if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col)
-      if (type == 1) hline(scr, sx,i, (ex-sx)+1, col)
+      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col, dbg)
+      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col, dbg)
+      hline(scr, sx,i, (ex-sx)+1, col, dbg)
     } else {
-      if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col)
-      if (type == 1) hline(scr, ex,i, (sx-ex)+1, col)
+      #if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col, dbg)
+      #if (type == 1) hline(scr, ex,i, (sx-ex)+1, col, dbg)
+      hline(scr, ex,i, (sx-ex)+1, col, dbg)
     }
   }
 
@@ -252,11 +256,13 @@ printf("d: %.4f, %.4f, %.4f\n", d1, d2, d3)
     ex = x2 + (i-y2) * d2
 
     if (sx < ex) {
-      if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col+1)
-      if (type == 1) hline(scr, sx,i, (ex-sx)+1, col+1)
+      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col+1, dbg)
+      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col+1, dbg)
+      hline(scr, sx,i, (ex-sx)+1, col+1, dbg)
     } else {
-      if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col+1)
-      if (type == 1) hline(scr, ex,i, (sx-ex)+1, col+1)
+      #if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col+1, dbg)
+      #if (type == 1) hline(scr, ex,i, (sx-ex)+1, col+1, dbg)
+      hline(scr, ex,i, (sx-ex)+1, col+1, dbg)
     }
   }
 
@@ -336,15 +342,24 @@ function myTime() {
 ## Main program
 ##
 BEGIN {
-  init(scr, 100,40)
+  init(scr, 85,80)
   cursor("off")
 
   #fillTriangle(scr, 5,15, 40,5, 15,35, color["red"])
   #fillTriangle(scr, 15,35, 40,5, 5,15, color["red"])
 
-  fillTriangle(scr, 15,35,  5,15, 40,5, color["red"], 0)
-  fillTriangle(scr, 55,35, 45,15, 80,5, color["blue"], 1)
+  for (i=0; i<10000; i++) {
+#    triangle(scr,     15,35,  5,15, 40, 5, color["white"])
+#    triangle(scr,     55,35, 45,15, 80, 5, color["white"])
+#    fillTriangle(scr, 15,35,  5,15, 40, 5, color["red"], 0, 0)
+    fillTriangle(scr, 55,35, 45,15, 80, 5, color["yellow"], 1, 0)
 
-  draw(scr, 80,0)
+#    fillTriangle(scr, 15,75,  5,55, 40,45, color["red"], 0, 0)
+#    fillTriangle(scr, 55,75, 45,55, 80,45, color["yellow"], 1, 0)
+#    triangle(scr,     15,75,  5,55, 40,45, color["white"])
+#    triangle(scr,     55,75, 45,55, 80,45, color["white"])
+  }
+  draw(scr, 80,2)
+
   cursor("on")
 }
