@@ -256,13 +256,13 @@ function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type, dbg,   i, d1,d2,d3, s
     ex = x2 + (i-y2) * d2
 
     if (sx < ex) {
-      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col+1, dbg)
-      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col+1, dbg)
-      hline(scr, sx,i, (ex-sx)+1, col+1, dbg)
+      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col, dbg)
+      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col, dbg)
+      hline(scr, sx,i, (ex-sx)+1, col, dbg)
     } else {
-      #if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col+1, dbg)
-      #if (type == 1) hline(scr, ex,i, (sx-ex)+1, col+1, dbg)
-      hline(scr, ex,i, (sx-ex)+1, col+1, dbg)
+      #if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col, dbg)
+      #if (type == 1) hline(scr, ex,i, (sx-ex)+1, col, dbg)
+      hline(scr, ex,i, (sx-ex)+1, col, dbg)
     }
   }
 
@@ -348,8 +348,20 @@ function myTime() {
   } else return(systime())
 }
 
-function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
 
+function crossProduct(n, a,b,    l) {
+  n["x"] = a["y"] * b["z"] - a["z"] - b["y"]
+  n["y"] = a["z"] * b["x"] - a["x"] - b["z"]
+  n["z"] = a["x"] * b["y"] - a["y"] - b["x"]
+
+  l = sqrt(n["x"]*n["x"] + n["y"]*n["y"] + n["z"]*n["z"])
+
+  n["x"] /= l
+  n["y"] /= l
+  n["z"] /= l
+}
+
+function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
 
   scale = (viewmode == 1) ? 1 / camz : 1
 
@@ -402,7 +414,26 @@ function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrot
       v2 = obj["tri"][t][2]
       v3 = obj["tri"][t][3]
 
-      fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
+#      a["x"] = obj["vert"][v2]["x"] - obj["vert"][v1]["x"]
+#      a["y"] = obj["vert"][v2]["y"] - obj["vert"][v1]["y"]
+#      a["z"] = obj["vert"][v2]["z"] - obj["vert"][v1]["z"]
+#
+#      b["x"] = obj["vert"][v3]["x"] - obj["vert"][v1]["x"]
+#      b["y"] = obj["vert"][v3]["y"] - obj["vert"][v1]["y"]
+#      b["z"] = obj["vert"][v3]["z"] - obj["vert"][v1]["z"]
+
+      a["x"] = xpos[v2] - xpos[v1]
+      a["y"] = ypos[v2] - ypos[v1]
+      a["z"] = zpos[v2] - zpos[v1]
+
+      b["x"] = xpos[v3] - xpos[v1]
+      b["y"] = ypos[v3] - ypos[v1]
+      b["z"] = zpos[v3] - zpos[v1]
+
+      crossProduct(n, a,b)
+
+      if (n["z"] < 0)
+        fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
     }
   } else if (drawmode == 2) {
     # draw triangles
@@ -411,7 +442,26 @@ function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrot
       v2 = obj["tri"][t][2]
       v3 = obj["tri"][t][3]
 
-      triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
+#      a["x"] = obj["vert"][v2]["x"] - obj["vert"][v1]["x"]
+#      a["y"] = obj["vert"][v2]["y"] - obj["vert"][v1]["y"]
+#      a["z"] = obj["vert"][v2]["z"] - obj["vert"][v1]["z"]
+#
+#      b["x"] = obj["vert"][v3]["x"] - obj["vert"][v1]["x"]
+#      b["y"] = obj["vert"][v3]["y"] - obj["vert"][v1]["y"]
+#      b["z"] = obj["vert"][v3]["z"] - obj["vert"][v1]["z"]
+
+      a["x"] = xpos[v2] - xpos[v1]
+      a["y"] = ypos[v2] - ypos[v1]
+      a["z"] = zpos[v2] - zpos[v1]
+
+      b["x"] = xpos[v3] - xpos[v1]
+      b["y"] = ypos[v3] - ypos[v1]
+      b["z"] = zpos[v3] - zpos[v1]
+
+      crossProduct(n, a,b)
+
+      if (n["z"] < 0)
+        triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
     }
   } else if (drawmode == 1) {
     # draw edges
