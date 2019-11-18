@@ -317,6 +317,15 @@ function load3d(obj, file,   var, linenr, v, e) {
           obj["edge"][e]["color"] = variable($4, var)
           #printf("load3d(): e[%d] = (%s, %s, %s) -> (%s, %s, %s)\n", v, $2, $3, $4, obj["edge"][e]["from"], obj["edge"][e]["to"], obj["edge"][e]["color"])
         } else printf("Error line #%d: syntax error: \"edge <vertex1> <vertex2> <color>\"\n", linenr)
+      } else if ($1 == "tri") {
+        if (NF == 5) {
+          t++
+          obj["tri"][t][1] = variable($2, var)
+          obj["tri"][t][2] = variable($3, var)
+          obj["tri"][t][3] = variable($4, var)
+          obj["tri"][t]["color"] = variable($5, var)
+          printf("load3d(): t[%d] = (%s, %s, %s, %s) -> (%s, %s, %s, %s)\n", t, $2, $3, $4, $5, obj["tri"][t][1], obj["tri"][t][2], obj["tri"][t][3], obj["tri"][t]["color"])
+        } else printf("Error line #%d: syntax error: \"tri <vertex1> <vertex2> <vertex3> <color>\"\n", linenr)
 
       } else {
         printf("Error line #%d: unknown keyword \"%s\"\n", linenr, $1)
@@ -325,8 +334,9 @@ function load3d(obj, file,   var, linenr, v, e) {
   }
   obj["vertices"] = v
   obj["edges"] = e
+  obj["tris"] = t
 
-  printf("Loaded %d vertices and %d edges in %d lines\n", v, e, linenr)
+  printf("Loaded %d vertices, %d edges and %d triangles in %d lines\n", v, e, t, linenr)
 }
 
 
@@ -338,28 +348,130 @@ function myTime() {
   } else return(systime())
 }
 
+function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
+
+
+  scale = (viewmode == 1) ? 1 / camz : 1
+
+  # calculate screen coordinates of each vertex
+  for (v=1; v<=obj["vertices"]; v++) {
+    # delta from pivot point
+    dx = obj["vert"][v]["x"] - pivx
+    dy = obj["vert"][v]["y"] - pivy
+    dz = obj["vert"][v]["z"] - pivz
+
+    zx = dx*cos(anglez) - dy*sin(anglez) - dx
+    zy = dx*sin(anglez) + dy*cos(anglez) - dy 
+
+    yx = (dx+zx)*cos(angley) - dz*sin(angley) - (dx+zx)
+    yz = (dx+zx)*sin(angley) + dz*cos(angley) - dz
+
+    xy = (dy+zy)*cos(anglex) - (dz+yz)*sin(anglex) - (dy+zy)
+    xz = (dy+zy)*sin(anglex) + (dz+yz)*cos(anglex) - (dz+yz)
+
+    xrotoffset = yx+zx
+    yrotoffset = zy+xy
+    zrotoffset = xz+yz
+
+    if (viewmode == 1) { 
+      # real 3d view
+      zpos[v] = (obj["vert"][v]["z"] + zrotoffset + camz)
+      xpos[v] = (obj["vert"][v]["x"] + xrotoffset + camx) / zpos[v] / scale + movex
+      ypos[v] = (obj["vert"][v]["y"] + yrotoffset + camy) / zpos[v] / scale + movey
+    } else {
+      # isometric view
+      xpos[v] = (obj["vert"][v]["x"] + xrotoffset + camx) / scale + movex
+      ypos[v] = (obj["vert"][v]["y"] + yrotoffset + camy) / scale + movey
+    }
+
+  }
+
+  # clear canvas
+  clear(scr)
+
+  # draw pivot pixel
+  px = ( (pivx+camx) / (pivz+camz) ) / scale + movex
+  py = ( (pivy+camy) / (pivz+camz) ) / scale + movey
+  pixel(scr, px,py, pc)
+
+  # drawmode, edges or vertices
+  if (drawmode == 3) {
+    # draw filled triangles
+    for (t=1; t<=obj["tris"]; t++) {
+      v1 = obj["tri"][t][1]
+      v2 = obj["tri"][t][2]
+      v3 = obj["tri"][t][3]
+
+      fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
+    }
+  } else if (drawmode == 2) {
+    # draw triangles
+    for (t=1; t<=obj["tris"]; t++) {
+      v1 = obj["tri"][t][1]
+      v2 = obj["tri"][t][2]
+      v3 = obj["tri"][t][3]
+
+      triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
+    }
+  } else if (drawmode == 1) {
+    # draw edges
+    for (e=1; e<=obj["edges"]; e++) {
+      v1 = obj["edge"][e]["from"]
+      v2 = obj["edge"][e]["to"]
+
+      line(scr, xpos[v1],ypos[v1], xpos[v2], ypos[v2], obj["edge"][e]["color"])
+    }
+  } else {
+    # draw vertices
+    for (v=1; v<=obj["vertices"]; v++)
+      pixel(scr, xpos[v], ypos[v], color["white"])
+  }
+
+}
+
 ##
 ## Main program
 ##
 BEGIN {
-  init(scr, 85,80)
+  if ("COLUMNS" in ENVIRON) {
+    width = ENVIRON["COLUMNS"]
+    height = ENVIRON["LINES"]
+  } else {
+    "tput cols"  | getline width
+    "tput lines" | getline height
+    if (!w || !h)
+      w = 80; h = 24
+  }
+  height = (height-1) * 2
+
+  width = 85
+  height = 80
+  init(scr, width,height)
   cursor("off")
 
-  #fillTriangle(scr, 5,15, 40,5, 15,35, color["red"])
-  #fillTriangle(scr, 15,35, 40,5, 5,15, color["red"])
+  # set up viewmode variables
+  i = height/3
+  viewmode = 1
+  drawmode = 2
+  camx = 0;   camy = 0;   camz = 200
+  movex = 0;  movey = 0;  scale = 1
+  anglex = 0; angley = 0; anglez = 0
+  pivx = 0;   pivy = 0;   pivz = 0
 
-  for (i=0; i<10000; i++) {
-#    triangle(scr,     15,35,  5,15, 40, 5, color["white"])
-#    triangle(scr,     55,35, 45,15, 80, 5, color["white"])
-#    fillTriangle(scr, 15,35,  5,15, 40, 5, color["red"], 0, 0)
-    fillTriangle(scr, 55,35, 45,15, 80, 5, color["yellow"], 1, 0)
+  movex = width/2
+  movey = height/2
 
-#    fillTriangle(scr, 15,75,  5,55, 40,45, color["red"], 0, 0)
-#    fillTriangle(scr, 55,75, 45,55, 80,45, color["yellow"], 1, 0)
-#    triangle(scr,     15,75,  5,55, 40,45, color["white"])
-#    triangle(scr,     55,75, 45,55, 80,45, color["white"])
+  load3d(obj, "models/cube2.obj")
+
+  while ("awk" != "difficult") {
+    angley += 0.05;	# spin on y-axis
+    anglez += 0.03;	# spin on z-axis
+
+    obj3d(scr, obj)
+    draw(scr, 80,2)
+
+    system("sleep 0.1")
   }
-  draw(scr, 80,2)
 
   cursor("on")
 }
