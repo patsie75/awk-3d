@@ -483,24 +483,24 @@ function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrot
 ## Main program
 ##
 BEGIN {
-  v3d["x"] = 0
-  v3d["y"] = 0
-  v3d["z"] = 0
-
-  tri[1] = v3d
-
-  obj[1]["tri"][1]["vect"][1]["x"] = 0
-  obj[1]["tri"][1]["vect"][1]["y"] = 0
-  obj[1]["tri"][1]["vect"][1]["z"] = 0
-
-  obj[1]["tri"][1]["vect"][2]["x"] = 0
-  obj[1]["tri"][1]["vect"][2]["y"] = 0
-  obj[1]["tri"][1]["vect"][2]["z"] = 0
-
-  obj[1]["tri"][1]["vect"][3]["x"] = 0
-  obj[1]["tri"][1]["vect"][3]["y"] = 0
-  obj[1]["tri"][1]["vect"][3]["z"] = 0
-
+#  v3d["x"] = 0
+#  v3d["y"] = 0
+#  v3d["z"] = 0
+#
+#  tri[1] = v3d
+#
+#  obj[1]["tri"][1]["vect"][1]["x"] = 0
+#  obj[1]["tri"][1]["vect"][1]["y"] = 0
+#  obj[1]["tri"][1]["vect"][1]["z"] = 0
+#
+#  obj[1]["tri"][1]["vect"][2]["x"] = 0
+#  obj[1]["tri"][1]["vect"][2]["y"] = 0
+#  obj[1]["tri"][1]["vect"][2]["z"] = 0
+#
+#  obj[1]["tri"][1]["vect"][3]["x"] = 0
+#  obj[1]["tri"][1]["vect"][3]["y"] = 0
+#  obj[1]["tri"][1]["vect"][3]["z"] = 0
+#
 
   if ("COLUMNS" in ENVIRON) {
     width = ENVIRON["COLUMNS"]
