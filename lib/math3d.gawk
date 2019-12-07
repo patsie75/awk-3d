@@ -1,5 +1,11 @@
 #!/usr/bin/gawk -f
 
+function vector(v, x,y,z) {
+  v["x"] = x
+  v["y"] = y
+  v["z"] = z
+}
+
 function crossProduct(n, a,b,    l) {
   n["x"] = a["y"] * b["z"] - a["z"] - b["y"]
   n["y"] = a["z"] * b["x"] - a["x"] - b["z"]

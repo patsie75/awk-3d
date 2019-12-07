@@ -1,6 +1,6 @@
 #!/usr/bin/gawk -f
 
-function create_subtree(arr, subkey, sep,   i,j) {
+function array(arr, subkey, sep,   i,j) {
   if (subkey) {
     sep = sep ? sep : ","
     j = index(subkey, sep)
@@ -11,7 +11,7 @@ function create_subtree(arr, subkey, sep,   i,j) {
     j = "__RANDOM_KEY_" rand()
     arr[i][j] = ""
     delete arr[i][j]
-    create_subtree(arr, subkey, sep)
+    array(arr, subkey, sep)
   }
 }
 
