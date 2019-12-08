@@ -21,7 +21,8 @@ BEGIN {
 
   ## set up viewmode variables
   cam["viewmode"] = 1; # 0 == isometric, 1 == 3d
-  cam["drawmode"] = 2; # 0 == vertices; 1 == edges; 2 == triangles; 3 == filled triangles
+  cam["drawmode"] = 3; # 0 == vertices; 1 == edges; 2 == triangles; 3 == filled triangles
+  cam["wireframe"] = 0; # 0 == solid; 1 == wireframe
 
   ## create 'camera' array
   array(cam, "loc")
@@ -36,8 +37,8 @@ BEGIN {
   vector(cam["piv"], 0, 0, 0)
 
   ## load 3D object
-  #loadmesh(mesh, "models/cube.mesh")
-  loadmesh(mesh, "models/pyramid.mesh")
+  loadmesh(mesh, "models/cube.mesh")
+  #loadmesh(mesh, "models/pyramid.mesh")
   #loadmesh(mesh, "models/octohedron.mesh")
 
   ##
@@ -51,9 +52,9 @@ BEGIN {
 
     clear(scr)
     drawmesh(scr, mesh, cam)
-    draw(scr, 80,2)
+    draw(scr, 0,0)
 
-    system("sleep 0.1")
+    system("sleep 0.05")
   }
 
   cursor("on")

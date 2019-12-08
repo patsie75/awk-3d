@@ -64,7 +64,7 @@ function triangle(src, x1,y1, x2,y2, x3,y3, col) {
   line(scr, x3,y3, x1,y1, col)
 }
 
-function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type,   i, d1,d2,d3, sx,ex) {
+function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type,    i, d1,d2,d3, sx,ex) {
   # y1 < y2 < y3
   if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
   if (y3 < y2) { i=y2; y2=y3; y3=i; i=x2; x2=x3; x3=i }
@@ -94,9 +94,9 @@ function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type,   i, d1,d2,d3, sx,ex)
     ex = x2 + (i-y2) * d2
 
     if (sx < ex) {
-      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col)
-      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col)
       hline(scr, sx,i, (ex-sx)+1, col)
+    } else {
+      hline(scr, ex,i, (sx-ex)+1, col)
     }
   }
 

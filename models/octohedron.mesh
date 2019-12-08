@@ -3,12 +3,12 @@
 ##
 
 # variables
+var a 25
+var b 35
+
 var red 1
 var blue 4
 var white 7
-
-var a 25
-var b 35
 
 ## vertices
 vert -a -a  0
@@ -19,29 +19,15 @@ vert -a  a  0
 vert  0  0  b
 vert  0  0 -b
 
-# edges
-edge 1 2 white
-edge 2 3 white
-edge 3 4 white
-edge 4 1 white
-
-edge 5 1 red
-edge 5 2 red
-edge 5 3 red
-edge 5 4 red
-
-edge 6 1 blue
-edge 6 2 blue
-edge 6 3 blue
-edge 6 4 blue
-
-tri 1 5 2
+# top
+tri 1 5 2 blue
 tri 2 5 3
-tri 3 5 4
+tri 3 5 4 blue
 tri 4 5 1
 
-tri 1 2 6
-tri 2 3 6
-tri 3 4 6
-tri 4 1 6
+# bottom
+tri 2 6 1
+tri 3 6 2 red
+tri 4 6 3
+tri 1 6 4 red
 

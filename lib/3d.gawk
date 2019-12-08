@@ -60,7 +60,7 @@ function loadmesh(mesh, file,   var, linenr, v, e) {
           mesh["tri"][t][2] = variable($3, var)
           mesh["tri"][t][3] = variable($4, var)
           mesh["tri"][t]["color"] = (NF == 5) ? variable($5, var) : 7
-          printf("loadmesh(): t[%d] = (%s, %s, %s, %s) -> (%s, %s, %s, %s)\n", t, $2, $3, $4, $5, mesh["tri"][t][1], mesh["tri"][t][2], mesh["tri"][t][3], mesh["tri"][t]["color"])
+          #printf("loadmesh(): t[%d] = (%s, %s, %s, %s) -> (%s, %s, %s, %s)\n", t, $2, $3, $4, $5, mesh["tri"][t][1], mesh["tri"][t][2], mesh["tri"][t][3], mesh["tri"][t]["color"])
         } else printf("Error line #%d: syntax error: \"tri <vertex1> <vertex2> <vertex3> [<color>]\"\n", linenr)
 
       } else {
@@ -72,7 +72,7 @@ function loadmesh(mesh, file,   var, linenr, v, e) {
   mesh["edges"] = e
   mesh["tris"] = t
 
-  printf("Loaded %d vertices, %d edges and %d triangles in %d lines\n", v, e, t, linenr)
+  #printf("Loaded %d vertices, %d edges and %d triangles in %d lines\n", v, e, t, linenr)
 }
 
 function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
@@ -119,8 +119,7 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
   pixel(scr, px,py, pc)
 
   # drawmode, edges or vertices
-  if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)){
-    # draw filled triangles
+  if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)) {
     for (t=1; t<=mesh["tris"]; t++) {
       v1 = mesh["tri"][t][1]
       v2 = mesh["tri"][t][2]
@@ -131,10 +130,11 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
       crossProduct(n, line1,line2)
 
-      if (n["z"] < 0) {
-        if (cam["drawmode"] == 3)
+      if (cam["drawmode"] == 3) {
+        if (n["z"] < 0) 
           fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
-        else
+      } else {
+        if (cam["wireframe"] || n["z"] < 0) 
           triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
       }
     }
