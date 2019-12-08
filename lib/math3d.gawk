@@ -7,9 +7,9 @@ function vector(v, x,y,z) {
 }
 
 function crossProduct(n, a,b,    l) {
-  n["x"] = a["y"] * b["z"] - a["z"] - b["y"]
-  n["y"] = a["z"] * b["x"] - a["x"] - b["z"]
-  n["z"] = a["x"] * b["y"] - a["y"] - b["x"]
+  n["x"] = a["y"] * b["z"] - a["z"] * b["y"]
+  n["y"] = a["z"] * b["x"] - a["x"] * b["z"]
+  n["z"] = a["x"] * b["y"] - a["y"] * b["x"]
 
   l = sqrt(n["x"]*n["x"] + n["y"]*n["y"] + n["z"]*n["z"])
 

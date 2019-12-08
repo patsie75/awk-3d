@@ -126,10 +126,10 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       v2 = mesh["tri"][t][2]
       v3 = mesh["tri"][t][3]
 
-      vector(a, xpos[v2]-xpos[v1], ypos[v2]-ypos[v1], zpos[v2]-zpos[v1])
-      vector(b, xpos[v3]-xpos[v1], ypos[v3]-ypos[v1], zpos[v3]-zpos[v1])
+      vector(line1, xpos[v2]-xpos[v1], ypos[v2]-ypos[v1], zpos[v2]-zpos[v1])
+      vector(line2, xpos[v3]-xpos[v1], ypos[v3]-ypos[v1], zpos[v3]-zpos[v1])
 
-      crossProduct(n, a,b)
+      crossProduct(n, line1,line2)
 
       if (n["z"] < 0) {
         if (cam["drawmode"] == 3)

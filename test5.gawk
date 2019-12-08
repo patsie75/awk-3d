@@ -36,7 +36,9 @@ BEGIN {
   vector(cam["piv"], 0, 0, 0)
 
   ## load 3D object
-  loadmesh(mesh, "models/cube2.obj")
+  #loadmesh(mesh, "models/cube.mesh")
+  loadmesh(mesh, "models/pyramid.mesh")
+  #loadmesh(mesh, "models/octohedron.mesh")
 
   ##
   ## main loop
