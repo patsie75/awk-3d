@@ -8,6 +8,8 @@ var white 7
 var a 20
 var p 33.62
 
+## https://www.classes.cs.uchicago.edu/archive/2003/fall/23700/docs/handout-04.pdf
+
 ## VERTICES
 # (0, ±1, ±ϕ)
 vert  p  a  0
@@ -43,4 +45,4 @@ tri  8  4  2 yellow
 tri  9  7  5 white
 tri 10  5  7 red
 tri 11  6  8 yellow
-tri 12  8  6 yellow
+tri 13  8  6 yellow
