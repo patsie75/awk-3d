@@ -19,3 +19,5 @@ This is a first attempt to draw things in 3D space, so I hope to spend some more
 <p>
 Here's a screenshot:<br>
 ![icosahedron](/icosahedron.png?raw=true "Spinning Icosahedron")
+
+See youtube for a moving example: https://youtu.be/1Vpea0MxXM8
