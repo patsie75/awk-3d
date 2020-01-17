@@ -25,24 +25,25 @@ vert  0 -p  a
 vert  0  p -a
 vert  0 -p -a
 
+
 ## TRIANGLES
 tri  1  9  5 red
 tri  1  6 11 blue
-tri  3  5 10 red
-tri  3 12  6 green
-tri  2  7  9 white
-tri  2 11  8 blue
-tri  4 10  7 white
-tri  4  8 12 green
+tri  3  5 10 yellow
+tri  3 12  6 blue
+tri  2  7  9 yellow
+tri  2 11  8 green
+tri  4 10  7 yellow
+tri  4  8 12 white
 tri  1 11  9 white
-tri  2  9 11 blue
-tri  3 10 12 green
-tri 12 10  4 red
+tri  2  9 11 red
+tri  3 10 12 white
+tri 12 10  4 blue
 tri  5  3  1 green
 tri  6  1  3 yellow
-tri  7  2  4 blue
-tri  8  4  2 yellow
-tri  9  7  5 white
-tri 10  5  7 red
-tri 11  6  8 yellow
-tri 13  8  6 yellow
+tri  7  2  4 green
+tri  8  4  2 red
+tri  9  7  5 green
+tri 10  5  7 blue
+tri 11  6  8 white
+tri 12  8  6 red

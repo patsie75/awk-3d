@@ -65,3 +65,28 @@ function draw(scr, xpos,ypos,    x,y,ywidth,y2width,buf) {
 #  fflush("/dev/stdout")
 }
 
+function myTime() {
+  # /proc/uptime has more precision than systime()
+  if ((getline < "/proc/uptime") > 0) {
+    close("/proc/uptime")
+    return($1)
+  } else return(systime())
+}
+
+# return number of frames in time interval
+function fps(f) {
+  f["frame"] ++
+  f["now"] = myTime()
+
+  if (f["interval"] == 0)
+    f["interval"] = 1
+
+  if ( (f["now"] - f["prev"]) >= f["interval"] ) {
+    f["fps"] = f["frame"] / (f["now"] - f["prev"])
+    f["prev"] = f["now"]
+    f["frame"] = 0
+  }
+
+  return( f["fps"] )
+}
+

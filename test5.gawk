@@ -3,20 +3,20 @@
 @include "lib/3d.gawk"
 
 BEGIN {
-#  if ("COLUMNS" in ENVIRON) {
-#    width = ENVIRON["COLUMNS"]
-#    height = ENVIRON["LINES"]
-#  } else {
-#    "tput cols"  | getline width
-#    "tput lines" | getline height
-#    if (!w || !h)
-#      w = 80; h = 24
-#  }
-#  height = (height-1) * 2
+  if ("COLUMNS" in ENVIRON) {
+    width = ENVIRON["COLUMNS"]
+    height = ENVIRON["LINES"]
+  } else {
+    "tput cols"  | getline width
+    "tput lines" | getline height
+    if (!w || !h)
+      w = 80; h = 24
+  }
+  height = (height-1) * 2
 
   ## initialize screen buffer
-  width = 85
-  height = 80
+#  width = 85
+#  height = 80
   init(scr, width,height)
 
   ## set up viewmode variables
@@ -37,9 +37,10 @@ BEGIN {
   vector(cam["piv"], 0, 0, 0)
 
   ## load 3D object
-  loadmesh(mesh, "models/cube.mesh")
+  #loadmesh(mesh, "models/cube.mesh")
   #loadmesh(mesh, "models/pyramid.mesh")
   #loadmesh(mesh, "models/octohedron.mesh")
+  loadmesh(mesh, "models/icosahedron.mesh")
 
   ##
   ## main loop
@@ -50,11 +51,15 @@ BEGIN {
     cam["angle"]["y"] += 0.05;     # spin on y-axis
     cam["angle"]["z"] += 0.03;     # spin on z-axis
 
+    cam["loc"]["x"] = cos(cam["angle"]["z"]) * width / 4
+    cam["loc"]["y"] = sin(cam["angle"]["y"]) * height / 4
+
     clear(scr)
     drawmesh(scr, mesh, cam)
     draw(scr, 0,0)
 
-    system("sleep 0.05")
+    printf("\033[H%.2fFPS", fps(f))
+#    system("sleep 0.05")
   }
 
   cursor("on")
