@@ -40,7 +40,8 @@ BEGIN {
   #loadmesh(mesh, "models/pyramid.mesh")
   #loadmesh(mesh, "models/cube.mesh")
   #loadmesh(mesh, "models/octohedron.mesh")
-  loadmesh(mesh, "models/icosahedron.mesh")
+  #loadmesh(mesh, "models/icosahedron.mesh")
+  loadmesh(mesh, "models/dodecahedron.mesh")
 
   ##
   ## main loop
