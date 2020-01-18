@@ -13,8 +13,8 @@ function crossProduct(n, a,b,    l) {
 
   l = sqrt(n["x"]*n["x"] + n["y"]*n["y"] + n["z"]*n["z"])
 
-  n["x"] /= l
-  n["y"] /= l
-  n["z"] /= l
+  n["x"] /= l ? l : 1
+  n["y"] /= l ? l : 1
+  n["z"] /= l ? l : 1
 }
 
