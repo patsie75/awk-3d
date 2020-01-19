@@ -130,17 +130,18 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
       crossProduct(n, line1,line2)
 
+      colpri = mesh["tri"][t]["color"]
+      if ( cam["shading"] )
+        colsub = colors[colpri][0] - int( n["z"] * -colors[colpri][0] )
+      else
+        colsub = "1"
+
       if (cam["drawmode"] == 3) {
-        if (n["z"] < 0)  {
-          #fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
-          #fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], int(n["z"] * -15) + 240)
-          colpri = mesh["tri"][t]["color"]
-          colsub = colors[colpri][0] - int( n["z"] * -colors[colpri][0] )
+        if (n["z"] < 0) 
           fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
-        }
       } else {
         if (cam["wireframe"] || n["z"] < 0) 
-          triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
+          triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][1])
       }
     }
   } else if (cam["drawmode"] == 1) {

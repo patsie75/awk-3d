@@ -26,6 +26,7 @@ BEGIN {
   cam["viewmode"] = 1; # 0 == isometric, 1 == 3d
   cam["drawmode"] = 3; # 0 == vertices; 1 == edges; 2 == triangles; 3 == filled triangles
   cam["wireframe"] = 0; # 0 == solid; 1 == wireframe
+  cam["shading"] = 1; # 0 == no shading; 1 == shading
 
   ## create 'camera' array
   array(cam, "loc")
@@ -63,7 +64,7 @@ BEGIN {
     drawmesh(scr, mesh, cam)
     draw(scr, 0,0)
 
-    printf("%.2fFPS", fps(f))
+    printf("\033[H%.2fFPS", fps(f))
     system("sleep 0.01")
   }
 
