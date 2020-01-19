@@ -131,7 +131,7 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       crossProduct(n, line1,line2)
 
       ## color or greyscale
-      if (cam["color"])
+      if ( cam["color"] )
         colpri = mesh["tri"][t]["color"]
       else
         colpri = 7
@@ -142,15 +142,15 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       else
         colsub = "1"
 
-      if (cam["drawmode"] == 3) {
+      if ( cam["drawmode"] == 3 ) {
         if (n["z"] < 0) 
           fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
       } else {
         if (cam["wireframe"] || n["z"] < 0) 
-          triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][1])
+          triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub])
       }
     }
-  } else if (cam["drawmode"] == 1) {
+  } else if ( cam["drawmode"] == 1 ) {
     # draw edges
     for (e=1; e<=mesh["edges"]; e++) {
       v1 = mesh["edge"][e]["from"]
@@ -161,7 +161,8 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
   } else {
     # draw vertices
     for (v=1; v<=mesh["vertices"]; v++)
-      pixel(scr, xpos[v], ypos[v], color["white"])
+      #pixel(scr, xpos[v], ypos[v], color["white"])
+      pixel(scr, xpos[v], ypos[v], colors[7][1])
   }
 
 }
