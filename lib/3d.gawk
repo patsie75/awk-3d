@@ -24,8 +24,8 @@ function variable(value, vararr,   v, neg) {
 }
 
 
-function loadmesh(mesh, file,   var, linenr, v, e) {
-  linenr = 0
+function loadmesh(mesh, file,   var, linenr, v, e, t) {
+  linenr = v = e = t = 0
 
   while ((getline < file) > 0) {
     linenr++
@@ -131,8 +131,13 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       crossProduct(n, line1,line2)
 
       if (cam["drawmode"] == 3) {
-        if (n["z"] < 0) 
-          fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
+        if (n["z"] < 0)  {
+          #fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
+          #fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], int(n["z"] * -15) + 240)
+          colpri = mesh["tri"][t]["color"]
+          colsub = colors[colpri][0] - int( n["z"] * -colors[colpri][0] )
+          fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
+        }
       } else {
         if (cam["wireframe"] || n["z"] < 0) 
           triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], mesh["tri"][t]["color"])
