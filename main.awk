@@ -27,6 +27,7 @@ BEGIN {
   cam["drawmode"] = 3; # 0 == vertices; 1 == edges; 2 == triangles; 3 == filled triangles
   cam["wireframe"] = 0; # 0 == solid; 1 == wireframe
   cam["shading"] = 1; # 0 == no shading; 1 == shading
+  cam["color"] = 1; # 0 == greyscale; 1 == color
 
   ## create 'camera' array
   array(cam, "loc")

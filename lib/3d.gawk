@@ -130,9 +130,15 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
       crossProduct(n, line1,line2)
 
-      colpri = mesh["tri"][t]["color"]
+      ## color or greyscale
+      if (cam["color"])
+        colpri = mesh["tri"][t]["color"]
+      else
+        colpri = 7
+
+      ## shading or no shading
       if ( cam["shading"] )
-        colsub = colors[colpri][0] - int( n["z"] * -colors[colpri][0] )
+        colsub = colors[colpri][0] - int( abs(n["z"]) * colors[colpri][0] )
       else
         colsub = "1"
 
