@@ -1,0 +1,81 @@
+##
+## Red TRUE logo
+##
+
+var red 1
+
+## top 
+vert -25 -25 -5
+vert  25 -25 -5
+vert  25 -15 -5
+vert -25 -15 -5
+
+vert -25 -25  5
+vert  25 -25  5
+vert  25 -15  5
+vert -25 -15  5
+
+# middle
+vert -25 -5 -5
+vert  25 -5 -5
+vert  25  5 -5
+vert -25  5 -5
+
+vert -25 -5  5
+vert  25 -5  5
+vert  25  5  5
+vert -25  5  5
+
+# bottom
+vert -25  15 -5
+vert  25  15 -5
+vert  25  25 -5
+vert -25  25 -5
+
+vert -25  15  5
+vert  25  15  5
+vert  25  25  5
+vert -25  25  5
+
+## top
+tri  1  4  2  red
+tri  2  4  3  red
+tri  5  1  6  red
+tri  6  1  2  red
+tri  8  5  7  red
+tri  7  5  6  red
+tri  4  8  3  red
+tri  3  8  7  red
+tri  2  3  6  red
+tri  6  3  7  red
+tri  5  8  1  red
+tri  1  8  4  red
+
+## middle
+tri  9 12 10  red
+tri 10 12 11  red
+tri 13  9 14  red
+tri 14  9 10  red
+tri 16 13 15  red
+tri 15 13 14  red
+tri 12 16 11  red
+tri 11 16 15  red
+tri 10 11 14  red
+tri 14 11 15  red
+tri 13 16  9  red
+tri  9 16 12  red
+
+## bottom
+tri 17 20 18  red
+tri 18 20 19  red
+tri 21 17 22  red
+tri 22 17 18  red
+tri 24 21 23  red
+tri 23 21 22  red
+tri 20 24 19  red
+tri 19 24 23  red
+tri 18 19 22  red
+tri 22 19 23  red
+tri 21 24 17  red
+tri 17 24 20  red
+
