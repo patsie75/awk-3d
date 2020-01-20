@@ -52,7 +52,7 @@ function draw(scr, xpos,ypos,    x,y,ywidth,y2width,buf) {
       if ((fg != prevfg) || (bg != prevbg))
         #buf = buf sprintf("\033[%d;%dm%s", fg+30, bg+40, "▀")
         #buf = buf sprintf("\033[38;5;%dm\033[48;5;%dm%s", fg, bg, "▀")
-        buf = buf sprintf("\033[38;2;%sm\033[48;2;%sm%s", fg, bg, "▀")
+        buf = buf sprintf("\033[38;2;%s;48;2;%sm%s", fg, bg, "▀")
       else
         buf = buf "▀"
       prevfg = fg
