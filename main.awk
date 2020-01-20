@@ -1,7 +1,7 @@
 #!/usr/bin/gawk -f
 
 @include "lib/3d.gawk"
-@include "inc/colors.gawk"
+@include "lib/colors.gawk"
 
 BEGIN {
   if ("COLUMNS" in ENVIRON) {
