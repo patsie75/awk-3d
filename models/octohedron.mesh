@@ -1,0 +1,33 @@
+##
+## octohedron
+##
+
+# variables
+var a 25
+var b 35
+
+var red 1
+var blue 4
+var white 7
+
+## vertices
+vert -a -a  0
+vert  a -a  0
+vert  a  a  0
+vert -a  a  0
+
+vert  0  0  b
+vert  0  0 -b
+
+# top
+tri 1 5 2 blue
+tri 2 5 3
+tri 3 5 4 blue
+tri 4 5 1
+
+# bottom
+tri 2 6 1
+tri 3 6 2 red
+tri 4 6 3
+tri 1 6 4 red
+

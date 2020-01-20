@@ -61,7 +61,7 @@ function fill(scr, col,   i, size) {
 }
 
 ## Draw "canvas" onto the terminal
-function draw(scr,   x,y,ywidth,y2width,buf) {
+function draw(scr, xpos,ypos,    x,y,ywidth,y2width,buf) {
   # put clear screen in screen buffer
   #buf = "\033[2J\033[H"
   buf = "\033[H"
@@ -76,6 +76,7 @@ function draw(scr,   x,y,ywidth,y2width,buf) {
   for (y=0; y<h; y+=2) {
     ywidth = y*w
     y2width = (y+1)*w
+    buf = buf sprintf("\033[%s;%sH", (y/2)+ypos+1, xpos+1)
 
     # for each pixel in line
     for (x=0; x<w; x++) {
@@ -89,12 +90,12 @@ function draw(scr,   x,y,ywidth,y2width,buf) {
       prevbg = bg
     }
 
-    # end of line
-    buf = buf "\n"
+#    # end of line
+#    buf = buf "\n"
   }
 
   # draw buffer to screen and reset colors
-  printf("%s\033[0m", buf)
+  printf("%s\033[0m\n", buf)
 #  fflush("/dev/stdout")
 }
 
@@ -110,6 +111,44 @@ function pixel(scr, x, y, col,   x0,y0) {
   y0 = int(y+0.0001)
   if ((0 <= x0 && x0 < scr["width"]) && (0 <= y0 && y0 < scr["height"]))
     scr[y0*scr["width"] + x0] = col
+}
+
+function line3d(scr, vert, piv, angle, move, cam, viewmode, col,   dx,dy,dz, xy,xz,yx,yz,zx,zy, xrotoffset,yrotoffset,zrotoffset, v,scale) {
+    # calculate screen coordinates of each vertex
+    for (v=1; v<=2; v++) {
+      # delta from pivot point
+      dx = vert[v]["x"] - piv["x"]
+      dy = vert[v]["y"] - piv["y"]
+      dz = vert[v]["z"] - piv["z"]
+
+      zx = dx*cos(angle["z"]) - dy*sin(angle["z"]) - dx
+      zy = dx*sin(angle["z"]) + dy*cos(angle["z"]) - dy 
+
+      yx = (dx+zx)*cos(angle["y"]) - dz*sin(angle["y"]) - (dx+zx)
+      yz = (dx+zx)*sin(angle["y"]) + dz*cos(angle["y"]) - dz
+
+      xy = (dy+zy)*cos(angle["x"]) - (dz+yz)*sin(angle["x"]) - (dy+zy)
+      xz = (dy+zy)*sin(angle["x"]) + (dz+yz)*cos(angle["x"]) - (dz+yz)
+
+      xrotoffset = yx + zx
+      yrotoffset = zy + xy
+      zrotoffset = xz + yz
+
+      if (viewmode == 1) { 
+        # real 3d view
+        scale = 1 / cam["z"]
+        pos[v]["z"] = (vert[v]["z"] + zrotoffset + cam["z"])
+        pos[v]["x"] = (vert[v]["x"] + xrotoffset + cam["x"]) / pos[v]["z"] / scale + move["x"]
+        pos[v]["y"] = (vert[v]["y"] + yrotoffset + cam["y"]) / pos[v]["z"] / scale + move["y"]
+      } else {
+        # isometric view
+        scale = 1
+        xpos[v] = (vert[v]["x"] + xrotoffset + cam["x"]) / scale + move["x"]
+        ypos[v] = (vert[v]["y"] + yrotoffset + cam["y"]) / scale + move["y"]
+      }
+
+      line(scr, xpos[1],ypos[1], xpos[2], ypos[2], col)
+    }
 }
 
 ## Draw a line from (x1,y1) to (x2,y2)
@@ -164,34 +203,69 @@ function box(scr, x1,y1,x2,y2, col,   i, tmp) {
 
 }
 
-function circle(scr, x0,y0,r, col,   x,y, dx,dy, err) {
-  x = r-1
-  y = 0
-  dx = dy = 1
-  err = dx - (r*2)
+function triangle(src, x1,y1, x2,y2, x3,y3, col) {
+  line(scr, x1,y1, x2,y2, col)
+  line(scr, x2,y2, x3,y3, col)
+  line(scr, x3,y3, x1,y1, col)
+}
 
-  while (x >= y) {
-    pixel(scr, x0+x, y0+y, col)
-    pixel(scr, x0+y, y0+x, col)
-    pixel(scr, x0-y, y0+x, col)
-    pixel(scr, x0-x, y0+y, col)
+function hline(scr, x1,y1, len, col, dbg,   i) {
+  l = int(x1+len)
+#if (dbg) printf("hline(): (%3d,%3d),%2d -- [%6.3f,%6.3f],%6.3f (%d)\n", x1,y1,len, x1,y1,len, col)
+  for (i=x1; i<l; i++)
+    pixel(scr, i,y1, col)
+}
 
-    pixel(scr, x0-x, y0-y, col)
-    pixel(scr, x0-y, y0-x, col)
-    pixel(scr, x0+y, y0-x, col)
-    pixel(scr, x0+x, y0-y, col)
+function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type, dbg,   i, d1,d2,d3, sx,ex) {
+  # y1 < y2 < y3
+#if (dbg) printf("(%d,%d), (%d,%d), (%d,%d)\n", x1,y1, x2,y2, x3,y3)
 
-    if (err <= 0) {
-      y += 1
-      err += dy
-      dy += 2
-    }
-    if (err > 0) {
-      x -= 1
-      dx += 2
-      err += dx - (r*2)
+  if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
+  if (y3 < y2) { i=y2; y2=y3; y3=i; i=x2; x2=x3; x3=i }
+  if (y3 < y1) { i=y1; y1=y3; y3=i; i=x1; x1=x3; x3=i }
+  if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
+
+#if (dbg) printf("(%d,%d), (%d,%d), (%d,%d)\n", x1,y1, x2,y2, x3,y3)
+
+  # get delta/slopes
+  i = y2-y1; d1 = i ? (x2-x1) / i : 0
+  i = y3-y2; d2 = i ? (x3-x2) / i : 0
+  i = y1-y3; d3 = i ? (x1-x3) / i : 0
+
+#if (dbg) printf("d: %.4f, %.4f, %.4f\n", d1, d2, d3)
+
+  # upper triangle
+  for (i=y1; i<y2; i++) {
+    sx = x1 + (i-y1) * d3
+    ex = x1 + (i-y1) * d1
+
+    if (sx < ex) {
+      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col, dbg)
+      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col, dbg)
+      hline(scr, sx,i, (ex-sx)+1, col, dbg)
+    } else {
+      #if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col, dbg)
+      #if (type == 1) hline(scr, ex,i, (sx-ex)+1, col, dbg)
+      hline(scr, ex,i, (sx-ex)+1, col, dbg)
     }
   }
+
+  # lower triangle
+  for(i=y2; i<=y3; i++) {
+    sx = x1 + (i-y1) * d3
+    ex = x2 + (i-y2) * d2
+
+    if (sx < ex) {
+      #if (type == 0) hline(scr, sx,i, (ex-sx)+1 + (sx-int(sx)), col, dbg)
+      #if (type == 1) hline(scr, sx,i, (ex-sx)+1, col, dbg)
+      hline(scr, sx,i, (ex-sx)+1, col, dbg)
+    } else {
+      #if (type == 0) hline(scr, ex,i, (sx-ex)+1 + (ex-int(ex)), col, dbg)
+      #if (type == 1) hline(scr, ex,i, (sx-ex)+1, col, dbg)
+      hline(scr, ex,i, (sx-ex)+1, col, dbg)
+    }
+  }
+
 }
 
 function variable(value, vararr,   v, c, neg) {
@@ -243,6 +317,15 @@ function load3d(obj, file,   var, linenr, v, e) {
           obj["edge"][e]["color"] = variable($4, var)
           #printf("load3d(): e[%d] = (%s, %s, %s) -> (%s, %s, %s)\n", v, $2, $3, $4, obj["edge"][e]["from"], obj["edge"][e]["to"], obj["edge"][e]["color"])
         } else printf("Error line #%d: syntax error: \"edge <vertex1> <vertex2> <color>\"\n", linenr)
+      } else if ($1 == "tri") {
+        if (NF == 5) {
+          t++
+          obj["tri"][t][1] = variable($2, var)
+          obj["tri"][t][2] = variable($3, var)
+          obj["tri"][t][3] = variable($4, var)
+          obj["tri"][t]["color"] = variable($5, var)
+          printf("load3d(): t[%d] = (%s, %s, %s, %s) -> (%s, %s, %s, %s)\n", t, $2, $3, $4, $5, obj["tri"][t][1], obj["tri"][t][2], obj["tri"][t][3], obj["tri"][t]["color"])
+        } else printf("Error line #%d: syntax error: \"tri <vertex1> <vertex2> <vertex3> <color>\"\n", linenr)
 
       } else {
         printf("Error line #%d: unknown keyword \"%s\"\n", linenr, $1)
@@ -251,49 +334,11 @@ function load3d(obj, file,   var, linenr, v, e) {
   }
   obj["vertices"] = v
   obj["edges"] = e
+  obj["tris"] = t
 
-  printf("Loaded %d vertices and %d edges in %d lines\n", v, e, linenr)
+  printf("Loaded %d vertices, %d edges and %d triangles in %d lines\n", v, e, t, linenr)
 }
 
-
-function stage1() {
-  pc = color["black"]
-  viewmode = 1;		# true-3d
-  drawmode = 0;		# draw vertices
-}
-
-function stage2() {
-  drawmode = 1;		# draw edges
-}
-
-function stage3() {
-  anglez += 0.03;	# spin on z-axis
-}
-
-function stage4() {
-  pc = color["green"];	# pivot point
-  anglez += 0.03;	# spin on z-axis
-}
-
-function stage5() {
-  angley += 0.05;	# spin on y-axis
-  anglez += 0.03;	# spin on z-axis
-}
-
-function stage6() {
-  anglex += 0.02;	# spin on x-axis
-  angley += 0.05;	# spin on y-axis
-  anglez += 0.03;	# spin on z-axis
-}
-
-function stage7() {
-  anglex += 0.02;	# spin on x-axis
-  angley += 0.05;	# spin on y-axis
-  anglez += 0.03;	# spin on z-axis
-
-  camx = cos(anglez)*width/4;	# move camera x-axis
-  camy = sin(angley)*height/4;	# move camera y-axis
-}
 
 function myTime() {
   # /proc/uptime has more precision than systime()
@@ -303,11 +348,159 @@ function myTime() {
   } else return(systime())
 }
 
+
+function crossProduct(n, a,b,    l) {
+  n["x"] = a["y"] * b["z"] - a["z"] - b["y"]
+  n["y"] = a["z"] * b["x"] - a["x"] - b["z"]
+  n["z"] = a["x"] * b["y"] - a["y"] - b["x"]
+
+  l = sqrt(n["x"]*n["x"] + n["y"]*n["y"] + n["z"]*n["z"])
+
+  n["x"] /= l
+  n["y"] /= l
+  n["z"] /= l
+}
+
+function obj3d(scr, obj,   v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
+
+  scale = (viewmode == 1) ? 1 / camz : 1
+
+  # calculate screen coordinates of each vertex
+  for (v=1; v<=obj["vertices"]; v++) {
+    # delta from pivot point
+    dx = obj["vert"][v]["x"] - pivx
+    dy = obj["vert"][v]["y"] - pivy
+    dz = obj["vert"][v]["z"] - pivz
+
+    zx = dx*cos(anglez) - dy*sin(anglez) - dx
+    zy = dx*sin(anglez) + dy*cos(anglez) - dy 
+
+    yx = (dx+zx)*cos(angley) - dz*sin(angley) - (dx+zx)
+    yz = (dx+zx)*sin(angley) + dz*cos(angley) - dz
+
+    xy = (dy+zy)*cos(anglex) - (dz+yz)*sin(anglex) - (dy+zy)
+    xz = (dy+zy)*sin(anglex) + (dz+yz)*cos(anglex) - (dz+yz)
+
+    xrotoffset = yx+zx
+    yrotoffset = zy+xy
+    zrotoffset = xz+yz
+
+    if (viewmode == 1) { 
+      # real 3d view
+      zpos[v] = (obj["vert"][v]["z"] + zrotoffset + camz)
+      xpos[v] = (obj["vert"][v]["x"] + xrotoffset + camx) / zpos[v] / scale + movex
+      ypos[v] = (obj["vert"][v]["y"] + yrotoffset + camy) / zpos[v] / scale + movey
+    } else {
+      # isometric view
+      xpos[v] = (obj["vert"][v]["x"] + xrotoffset + camx) / scale + movex
+      ypos[v] = (obj["vert"][v]["y"] + yrotoffset + camy) / scale + movey
+    }
+
+  }
+
+  # clear canvas
+  clear(scr)
+
+  # draw pivot pixel
+  px = ( (pivx+camx) / (pivz+camz) ) / scale + movex
+  py = ( (pivy+camy) / (pivz+camz) ) / scale + movey
+  pixel(scr, px,py, pc)
+
+  # drawmode, edges or vertices
+  if (drawmode == 3) {
+    # draw filled triangles
+    for (t=1; t<=obj["tris"]; t++) {
+      v1 = obj["tri"][t][1]
+      v2 = obj["tri"][t][2]
+      v3 = obj["tri"][t][3]
+
+#      a["x"] = obj["vert"][v2]["x"] - obj["vert"][v1]["x"]
+#      a["y"] = obj["vert"][v2]["y"] - obj["vert"][v1]["y"]
+#      a["z"] = obj["vert"][v2]["z"] - obj["vert"][v1]["z"]
+#
+#      b["x"] = obj["vert"][v3]["x"] - obj["vert"][v1]["x"]
+#      b["y"] = obj["vert"][v3]["y"] - obj["vert"][v1]["y"]
+#      b["z"] = obj["vert"][v3]["z"] - obj["vert"][v1]["z"]
+
+      a["x"] = xpos[v2] - xpos[v1]
+      a["y"] = ypos[v2] - ypos[v1]
+      a["z"] = zpos[v2] - zpos[v1]
+
+      b["x"] = xpos[v3] - xpos[v1]
+      b["y"] = ypos[v3] - ypos[v1]
+      b["z"] = zpos[v3] - zpos[v1]
+
+      crossProduct(n, a,b)
+
+      if (n["z"] < 0)
+        fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
+    }
+  } else if (drawmode == 2) {
+    # draw triangles
+    for (t=1; t<=obj["tris"]; t++) {
+      v1 = obj["tri"][t][1]
+      v2 = obj["tri"][t][2]
+      v3 = obj["tri"][t][3]
+
+#      a["x"] = obj["vert"][v2]["x"] - obj["vert"][v1]["x"]
+#      a["y"] = obj["vert"][v2]["y"] - obj["vert"][v1]["y"]
+#      a["z"] = obj["vert"][v2]["z"] - obj["vert"][v1]["z"]
+#
+#      b["x"] = obj["vert"][v3]["x"] - obj["vert"][v1]["x"]
+#      b["y"] = obj["vert"][v3]["y"] - obj["vert"][v1]["y"]
+#      b["z"] = obj["vert"][v3]["z"] - obj["vert"][v1]["z"]
+
+      a["x"] = xpos[v2] - xpos[v1]
+      a["y"] = ypos[v2] - ypos[v1]
+      a["z"] = zpos[v2] - zpos[v1]
+
+      b["x"] = xpos[v3] - xpos[v1]
+      b["y"] = ypos[v3] - ypos[v1]
+      b["z"] = zpos[v3] - zpos[v1]
+
+      crossProduct(n, a,b)
+
+      if (n["z"] < 0)
+        triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], obj["tri"][t]["color"])
+    }
+  } else if (drawmode == 1) {
+    # draw edges
+    for (e=1; e<=obj["edges"]; e++) {
+      v1 = obj["edge"][e]["from"]
+      v2 = obj["edge"][e]["to"]
+
+      line(scr, xpos[v1],ypos[v1], xpos[v2], ypos[v2], obj["edge"][e]["color"])
+    }
+  } else {
+    # draw vertices
+    for (v=1; v<=obj["vertices"]; v++)
+      pixel(scr, xpos[v], ypos[v], color["white"])
+  }
+
+}
+
 ##
 ## Main program
 ##
 BEGIN {
-  #pi = atan2(0, -1)
+#  v3d["x"] = 0
+#  v3d["y"] = 0
+#  v3d["z"] = 0
+#
+#  tri[1] = v3d
+#
+#  obj[1]["tri"][1]["vect"][1]["x"] = 0
+#  obj[1]["tri"][1]["vect"][1]["y"] = 0
+#  obj[1]["tri"][1]["vect"][1]["z"] = 0
+#
+#  obj[1]["tri"][1]["vect"][2]["x"] = 0
+#  obj[1]["tri"][1]["vect"][2]["y"] = 0
+#  obj[1]["tri"][1]["vect"][2]["z"] = 0
+#
+#  obj[1]["tri"][1]["vect"][3]["x"] = 0
+#  obj[1]["tri"][1]["vect"][3]["y"] = 0
+#  obj[1]["tri"][1]["vect"][3]["z"] = 0
+#
 
   if ("COLUMNS" in ENVIRON) {
     width = ENVIRON["COLUMNS"]
@@ -320,13 +513,15 @@ BEGIN {
   }
   height = (height-1) * 2
 
-  # create empty canvas
-  init(scr, width, height)
+  width = 85
+  height = 80
+  init(scr, width,height)
   cursor("off")
 
   # set up viewmode variables
   i = height/3
-  viewmode = 0
+  viewmode = 1
+  drawmode = 2
   camx = 0;   camy = 0;   camz = 200
   movex = 0;  movey = 0;  scale = 1
   anglex = 0; angley = 0; anglez = 0
@@ -335,115 +530,17 @@ BEGIN {
   movex = width/2
   movey = height/2
 
-  # load 3D object
-  load3d(obj, "models/pyramid.obj")
-  #load3d(obj, "models/cube.obj")
-  #load3d(obj, "models/octohedron.obj")
-  #load3d(obj, "models/icosahedron.obj")
-
-  #printf("vertices: %d\n", obj["vertices"])
-  #for (v=1; v<=obj["vertices"]; v++)
-  #  printf("v[%d] = (%3d, %3d, %3d)\n", v, obj["vert"][v]["x"], obj["vert"][v]["y"], obj["vert"][v]["z"])
-  #printf("edges: %d\n", obj["edges"])
-  #for (e=1; e<=obj["edges"]; e++)
-  #  printf("e[%d] = (%3d, %3d, %3d)\n", v, obj["edge"][e]["from"], obj["edge"][e]["to"], obj["edge"][e]["color"])
-  #exit(0)
-
-
-  ##           ##
-  ## main loop ##
-  ##           ##
-
-  framenr = 0
-  starttime = myTime()
+  load3d(obj, "models/cube2.obj")
 
   while ("awk" != "difficult") {
-    time = myTime() - starttime
-    framenr++
+    angley += 0.05;	# spin on y-axis
+    anglez += 0.03;	# spin on z-axis
 
-    ## do different things at different times
-    if (framenr == 1) { stage1(); object = 1 }
-    if ( 5 <= time && time < 10) stage2()
-    if (10 <= time && time < 15) stage3()
-    if (15 <= time && time < 20) stage4()
-    if (20 <= time && time < 25) stage5()
-    if (25 <= time && time < 30) stage6()
-    if (30 <= time) stage7()
-    if (35 <= time && object == 1) { load3d(obj, "models/cube.obj"); object = 2 }
-    if (40 <= time && object == 2) { load3d(obj, "models/octohedron.obj"); object = 3 }
-    if (45 <= time && object == 3) { load3d(obj, "models/icosahedron.obj"); object = 4 }
+    obj3d(scr, obj)
+    draw(scr, 80,2)
 
-    scale = (viewmode == 1) ? 1 / camz : 1
-
-    # calculate screen coordinates of each vertex
-    for (v=1; v<=obj["vertices"]; v++) {
-      # delta from pivot point
-      dx = obj["vert"][v]["x"] - pivx
-      dy = obj["vert"][v]["y"] - pivy
-      dz = obj["vert"][v]["z"] - pivz
-
-      zx = dx*cos(anglez) - dy*sin(anglez) - dx
-      zy = dx*sin(anglez) + dy*cos(anglez) - dy 
-
-      yx = (dx+zx)*cos(angley) - dz*sin(angley) - (dx+zx)
-      yz = (dx+zx)*sin(angley) + dz*cos(angley) - dz
-
-      xy = (dy+zy)*cos(anglex) - (dz+yz)*sin(anglex) - (dy+zy)
-      xz = (dy+zy)*sin(anglex) + (dz+yz)*cos(anglex) - (dz+yz)
-
-      xrotoffset = yx+zx
-      yrotoffset = zy+xy
-      zrotoffset = xz+yz
-
-      if (viewmode == 1) { 
-        # real 3d view
-        zpos[v] = (obj["vert"][v]["z"] + zrotoffset + camz)
-        xpos[v] = (obj["vert"][v]["x"] + xrotoffset + camx) / zpos[v] / scale + movex
-        ypos[v] = (obj["vert"][v]["y"] + yrotoffset + camy) / zpos[v] / scale + movey
-      } else {
-        # isometric view
-        xpos[v] = (obj["vert"][v]["x"] + xrotoffset + camx) / scale + movex
-        ypos[v] = (obj["vert"][v]["y"] + yrotoffset + camy) / scale + movey
-      }
-
-    }
-
-    # clear canvas
-    clear(scr)
-
-    # draw pivot pixel
-    px = ( (pivx+camx) / (pivz+camz) ) / scale + movex
-    py = ( (pivy+camy) / (pivz+camz) ) / scale + movey
-    pixel(scr, px,py, pc)
-
-    # drawmode, edges or vertices
-    if (drawmode) {
-      # draw edges
-      for (e=1; e<=obj["edges"]; e++) {
-        vert1 = obj["edge"][e]["from"]
-        vert2 = obj["edge"][e]["to"]
-
-        line(scr, xpos[vert1],ypos[vert1], xpos[vert2], ypos[vert2], obj["edge"][e]["color"])
-      }
-    } else {
-      # draw vertices
-      for (v=1; v<=obj["vertices"]; v++)
-        pixel(scr, xpos[v], ypos[v], color["white"])
-    }
-
-    # draw canvas to screen
-    draw(scr)
-
-    # print object vertices information
-    #for (v=1; v<=obj["obj"]["vertices"]; v++)
-    #  printf("#%3d xpos[%d]=%7.3f   ypos[%d]=%7.3f   zpos[%d]=%7.3f\n", framenr, v, xpos[v], v, ypos[v], v, zpos[v])
-
-    fps(f)
-    printf("\033[H%.1fFPS", f["fps"])
-
-#    system("sleep 0.01")
+    system("sleep 0.1")
   }
 
   cursor("on")
 }
-

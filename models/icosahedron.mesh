@@ -1,0 +1,49 @@
+## icosahedron
+var red 1
+var green 2
+var yellow 3
+var blue 4
+var white 7
+
+var a 20
+var p 33.62
+
+## https://www.classes.cs.uchicago.edu/archive/2003/fall/23700/docs/handout-04.pdf
+
+## VERTICES
+# (0, ±1, ±ϕ)
+vert  p  a  0
+vert -p  a  0
+vert  p -a  0
+vert -p -a  0
+vert  a  0  p
+vert  a  0 -p
+vert -a  0  p
+vert -a  0 -p
+vert  0  p  a
+vert  0 -p  a
+vert  0  p -a
+vert  0 -p -a
+
+
+## TRIANGLES
+tri  1  9  5 red
+tri  1  6 11 blue
+tri  3  5 10 yellow
+tri  3 12  6 blue
+tri  2  7  9 yellow
+tri  2 11  8 green
+tri  4 10  7 yellow
+tri  4  8 12 white
+tri  1 11  9 white
+tri  2  9 11 red
+tri  3 10 12 white
+tri 12 10  4 blue
+tri  5  3  1 green
+tri  6  1  3 yellow
+tri  7  2  4 green
+tri  8  4  2 red
+tri  9  7  5 green
+tri 10  5  7 blue
+tri 11  6  8 white
+tri 12  8  6 red
