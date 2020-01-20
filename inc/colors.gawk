@@ -2,36 +2,43 @@
 
 @include "lib/array.gawk"
 
-BEGIN {
-  ## black
-  colors[0][0]   = split("0;0;0", arr, ",")
-  assign(arr, colors, "0")
-
-  ## red
-  colors[1][0] = split("255;0;0,247;0;0,239;0;0,231;0;0,223;0;0,215;0;0,207;0;0,199;0;0,191;0;0,183;0;0,175;0;0,167;0;0,159;0;0,151;0;0,143;0;0,135;0;0", arr, ",")
-  assign(arr, colors, 1)
-
-  ## green
-  colors[2][0] = split("0;255;0,0;247;0,0;239;0,0;231;0,0;223;0,0;215;0,0;207;0,0;199;0,0;191;0,0;183;0,0;175;0,0;167;0,0;159;0,0;151;0,0;143;0,0;135;0", arr, ",")
-  assign(arr, colors, 2)
-
-  ## yellow
-  colors[3][0] = split("255;255;0,247;247;0,239;239;0,231;231;0,223;223;0,215;215;0,207;207;0,199;199;0,191;191;0,183;183;0,175;175;0,167;167;0,159;159;0,151;151;0,143;143;0,135;135;0", arr, ",")
-  assign(arr, colors, 3)
-
-  ## blue
-  colors[4][0] = split("0;0;255,0;0;247,0;0;239,0;0;231,0;0;223,0;0;215,0;0;207,0;0;199,0;0;191,0;0;183,0;0;175,0;0;167,0;0;159,0;0;151,0;0;143,0;0;135", arr, ",")
-  assign(arr, colors, 4)
-
-  ## magenta
-  colors[5][0] = split("255;0;255,247;0;247,239;0;239,231;0;231,223;0;223,215;0;215,207;0;207,199;0;199,191;0;191,183;0;183,175;0;175,167;0;167,159;0;159,151;0;151,143;0;143,135;0;135", arr, ",")
-  assign(arr, colors, 5)
-
-  ## cyan
-  colors[6][0] = split("0;255;255,0;247;247,0;239;239,0;231;231,0;223;223,0;215;215,0;207;207,0;199;199,0;191;191,0;183;183,0;175;175,0;167;167,0;159;159,0;151;151,0;143;143,0;135;135", arr, ",")
-  assign(arr, colors, 6)
-
-  ## white
-  colors[7][0] = split("255;255;255,247;247;247,239;239;239,231;231;231,223;223;223,215;215;215,207;207;207,199;199;199,191;191;191,183;183;183,175;175;175,167;167;167,159;159;159,151;151;151,143;143;143,135;135;135", arr, ",")
-  assign(arr, colors, 7)
+function shade(col, shades, percent, gradients,    rgb, i) {
+  if (split(col, rgb, ";") == 3) {
+    delete gradients
+    for (i=1; i<=shades; i++) {
+      gradients[i] = sprintf("%s;%s;%s", int(rgb[1] - (rgb[1]*(darkness/100)*i/shades)), int(rgb[2] - (rgb[2]*(darkness/100)*i/shades)), int(rgb[3] - (rgb[3]*(darkness/100)*i/shades)) )
+    }
+    gradients[0] = shades
+  } else return -1
 }
+
+BEGIN {
+  nrshades = 16
+  darkness = 50
+
+  shade("0;0;0", nrshades, darkness, gradients)
+  assign(gradients, colors, "0")
+
+  shade("255;0;0", nrshades, darkness, gradients)
+  assign(gradients, colors, "1")
+
+  shade("0;255;0", nrshades, darkness, gradients)
+  assign(gradients, colors, "2")
+
+  shade("255;255;0", nrshades, darkness, gradients)
+  assign(gradients, colors, "3")
+
+  shade("0;0;255", nrshades, darkness, gradients)
+  assign(gradients, colors, "4")
+
+  shade("255;0;255", nrshades, darkness, gradients)
+  assign(gradients, colors, "5")
+
+  shade("0;255;255", nrshades, darkness, gradients)
+  assign(gradients, colors, "6")
+
+  shade("255;255;255", nrshades, darkness, gradients)
+  assign(gradients, colors, "7")
+
+}
+
