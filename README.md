@@ -18,6 +18,6 @@ The 'tri' keyword connects three vertices into a triangle (in a certain color)<b
 This is a first attempt to draw things in 3D space, so I hope to spend some more time refining everything<br>
 <p>
 Here's a screenshot:<br>
-![](./icosahedron.png)
+![](https://raw.githubusercontent.com/patsie75/awk-3d/master/icosahedron.png)
 
 See youtube for a moving example: https://youtu.be/cNM4f10IZWQ
