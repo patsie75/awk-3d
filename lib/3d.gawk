@@ -75,7 +75,7 @@ function loadmesh(mesh, file,   var, linenr, v, e, t) {
   #printf("Loaded %d vertices, %d edges and %d triangles in %d lines\n", v, e, t, linenr)
 }
 
-function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
+function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos, normal, painter) {
 
   ## 3D or isometric depth
   cam["move"]["z"] = (cam["viewmode"] == 1) ? 1 / cam["loc"]["z"] : 1
@@ -114,9 +114,9 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
   }
 
   # draw pivot pixel
-  px = ( (cam["piv"]["x"]+cam["loc"]["x"]) / (cam["piv"]["z"]+cam["loc"]["z"]) ) / cam["move"]["z"] + cam["move"]["x"]
-  py = ( (cam["piv"]["y"]+cam["loc"]["y"]) / (cam["piv"]["z"]+cam["loc"]["z"]) ) / cam["move"]["z"] + cam["move"]["y"]
-  pixel(scr, px,py, pc)
+#  px = ( (cam["piv"]["x"]+cam["loc"]["x"]) / (cam["piv"]["z"]+cam["loc"]["z"]) ) / cam["move"]["z"] + cam["move"]["x"]
+#  py = ( (cam["piv"]["y"]+cam["loc"]["y"]) / (cam["piv"]["z"]+cam["loc"]["z"]) ) / cam["move"]["z"] + cam["move"]["y"]
+#  pixel(scr, px,py, pc)
 
   # drawmode, edges or vertices
   if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)) {
@@ -130,6 +130,24 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
       crossProduct(n, line1,line2)
 
+      if (n["z"] < 0) {
+        normal[t] = n["z"]
+
+        painterz = (zpos[v1] + zpos[v2] + zpos[v3]) / 3
+        painter[t] = painterz
+#printf("painter[%d] = %.5f\n", t, painterz)
+      }
+    }
+
+    sort = PROCINFO["sorted_in"]
+    PROCINFO["sorted_in"] = "@val_num_desc"
+
+    for (t in painter) {
+      v1 = mesh["tri"][t][1]
+      v2 = mesh["tri"][t][2]
+      v3 = mesh["tri"][t][3]
+#printf("PAINTER[%d] = %.5f (%.3f)\n", t, painter[t], normal[t])
+
       ## color or greyscale
       if ( cam["color"] )
         colpri = mesh["tri"][t]["color"]
@@ -138,18 +156,20 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
       ## shading or no shading
       if ( cam["shading"] )
-        colsub = colors[colpri][0] - int( abs(n["z"]) * colors[colpri][0] )
+        colsub = colors[colpri][0] - int( abs(normal[t]) * colors[colpri][0] )
       else
         colsub = "1"
 
       if ( cam["drawmode"] == 3 ) {
-        if (n["z"] < 0) 
-          fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
+        fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
       } else {
-        if (cam["wireframe"] || n["z"] < 0) 
+        if (cam["wireframe"]) 
           triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub])
       }
     }
+
+    PROCINFO["sorted_in"] = sort
+
   } else if ( cam["drawmode"] == 1 ) {
     # draw edges
     for (e=1; e<=mesh["edges"]; e++) {

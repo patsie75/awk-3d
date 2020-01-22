@@ -46,7 +46,9 @@ BEGIN {
   #loadmesh(mesh, "models/cube.mesh")
   #loadmesh(mesh, "models/octohedron.mesh")
   #loadmesh(mesh, "models/dodecahedron.mesh")
-  loadmesh(mesh, "models/icosahedron.mesh")
+  #loadmesh(mesh, "models/icosahedron.mesh")
+  #loadmesh(mesh, "models/true/e.mesh")
+  loadmesh(mesh, "models/true/u.mesh")
 
   ##
   ## main loop
@@ -54,6 +56,7 @@ BEGIN {
   cursor("off")
 
   while ("awk" != "difficult") {
+#  while (framenr++ < 500) {
     cam["angle"]["x"] += 0.01;     # spin on x-axis
     cam["angle"]["y"] += 0.05;     # spin on y-axis
     cam["angle"]["z"] += 0.03;     # spin on z-axis
@@ -64,7 +67,6 @@ BEGIN {
     clear(scr)
     drawmesh(scr, mesh, cam)
     draw(scr, 0,0)
-
     printf("\033[H%.2fFPS", fps(f))
     system("sleep 0.01")
   }
