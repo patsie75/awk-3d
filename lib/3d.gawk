@@ -75,7 +75,7 @@ function loadmesh(mesh, file,   var, linenr, v, e, t) {
   #printf("Loaded %d vertices, %d edges and %d triangles in %d lines\n", v, e, t, linenr)
 }
 
-function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos, normal, painter) {
+function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v2,v3, xrotoffset,yrotoffset,zrotoffset, xpos,ypos,zpos) {
 
   ## 3D or isometric depth
   cam["move"]["z"] = (cam["viewmode"] == 1) ? 1 / cam["loc"]["z"] : 1
@@ -120,6 +120,8 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
   # drawmode, edges or vertices
   if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)) {
+    delete mesh["painter"]
+
     for (t=1; t<=mesh["tris"]; t++) {
       v1 = mesh["tri"][t][1]
       v2 = mesh["tri"][t][2]
@@ -131,22 +133,18 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       crossProduct(n, line1,line2)
 
       if (n["z"] < 0) {
-        normal[t] = n["z"]
-
-        painterz = (zpos[v1] + zpos[v2] + zpos[v3]) / 3
-        painter[t] = painterz
-#printf("painter[%d] = %.5f\n", t, painterz)
+        assign(n, mesh, "tri,"t",normal")
+        mesh["painter"][t] = (zpos[v1] + zpos[v2] + zpos[v3]) / 3
       }
     }
 
     sort = PROCINFO["sorted_in"]
     PROCINFO["sorted_in"] = "@val_num_desc"
 
-    for (t in painter) {
+    for (t in mesh["painter"]) {
       v1 = mesh["tri"][t][1]
       v2 = mesh["tri"][t][2]
       v3 = mesh["tri"][t][3]
-#printf("PAINTER[%d] = %.5f (%.3f)\n", t, painter[t], normal[t])
 
       ## color or greyscale
       if ( cam["color"] )
@@ -156,7 +154,7 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
       ## shading or no shading
       if ( cam["shading"] )
-        colsub = colors[colpri][0] - int( abs(normal[t]) * colors[colpri][0] )
+        colsub = colors[colpri][0] - int( abs(mesh["tri"][t]["normal"]["z"]) * colors[colpri][0] )
       else
         colsub = "1"
 

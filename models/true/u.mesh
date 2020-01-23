@@ -10,10 +10,10 @@ var white 7
 vert -25  15  -5
 vert -25 -25  -5
 vert -15 -25  -5
-vert -15  15  -5
+vert -15  10  -5
 
 ## right
-vert  15  15  -5
+vert  15  10  -5
 vert  15 -25  -5
 vert  25 -25  -5
 vert  25  15  -5
@@ -28,10 +28,10 @@ vert  10  25  -5
 vert -25  15   5
 vert -25 -25   5
 vert -15 -25   5
-vert -15  15   5
+vert -15  10   5
 
 ## right back
-vert  15  15   5
+vert  15  10   5
 vert  15 -25   5
 vert  25 -25   5
 vert  25  15   5
