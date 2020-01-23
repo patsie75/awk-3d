@@ -1,8 +1,10 @@
+##
 ## T
+##
 
-var white 7
 var red 1
 var blue 4
+var white 7
 
 ## front
 vert -115  -25   -5
@@ -52,11 +54,10 @@ tri   13    8   16 white
 tri   15    8    7 white
 tri    8   15   16 white
 
-## R
 
-var red   1
-var blue  4
-var white 7
+##
+## R
+##
 
 vert  -55  -25   -5
 vert  -15  -25   -5
@@ -150,13 +151,10 @@ tri   37   42   40 white
 tri   46   41   42 white
 tri   41   46   45 white
 
-##
-## Red TRUE logo
-##
 
-var red 1
-var blue 4
-var white 7
+##
+## U
+##
 
 ## left
 vert    5   15   -5
@@ -255,10 +253,8 @@ tri   58   66   54 white
 tri   66   58   70 white
 
 ##
-## Red TRUE logo
+## E
 ##
-
-var red 1
 
 ## top 
 vert   65  -25   -5

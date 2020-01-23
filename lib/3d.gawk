@@ -107,6 +107,7 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       ypos[v] = (mesh["vert"][v]["y"] + yrotoffset + cam["loc"]["y"]) / zpos[v] / cam["move"]["z"] + cam["move"]["y"]
     } else {
       # isometric view
+      zpos[v] = (mesh["vert"][v]["z"] + zrotoffset + cam["loc"]["z"])
       xpos[v] = (mesh["vert"][v]["x"] + xrotoffset + cam["loc"]["x"]) / cam["move"]["z"] + cam["move"]["x"]
       ypos[v] = (mesh["vert"][v]["y"] + yrotoffset + cam["loc"]["y"]) / cam["move"]["z"] + cam["move"]["y"]
     }
@@ -139,9 +140,11 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       }
     }
 
+    ## sort in decending order of values for painters algorithm
     sort = PROCINFO["sorted_in"]
     PROCINFO["sorted_in"] = "@val_num_desc"
 
+    ## draw in order of painters algorithm (back to front)
     for (t in mesh["painter"]) {
       v1 = mesh["tri"][t][1]
       v2 = mesh["tri"][t][2]

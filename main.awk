@@ -47,13 +47,13 @@ BEGIN {
   #loadmesh(mesh, "models/octohedron.mesh")
   #loadmesh(mesh, "models/dodecahedron.mesh")
   #loadmesh(mesh, "models/icosahedron.mesh")
-  #loadmesh(mesh, "models/true/e.mesh")
-  loadmesh(mesh, "models/true/u.mesh")
+  loadmesh(mesh, "models/true/true.mesh")
 
   ##
   ## main loop
   ##
   cursor("off")
+  start = myTime()
 
   while ("awk" != "difficult") {
 #  while (framenr++ < 500) {
@@ -65,6 +65,7 @@ BEGIN {
     cam["loc"]["y"] = sin(cam["angle"]["y"]) * height / 4
 
     clear(scr)
+    animate(start)
     drawmesh(scr, mesh, cam)
     draw(scr, 0,0)
     printf("\033[H%.2fFPS", fps(f))
@@ -72,4 +73,20 @@ BEGIN {
   }
 
   cursor("on")
+}
+
+function between(value, min, max) {
+  if ((value >= min) && (value < max)) return(1)
+  else return(0)
+}
+
+function animate(starttime) {
+  elapsed = myTime() - starttime
+
+  if (between(elapsed,  0,  5)) { cam["viewmode"] = 0; cam["drawmode"] = 0; cam["wireframe"] = 1; cam["shading"] = 0; cam["color"] = 0 }
+  if (between(elapsed,  5, 10)) { cam["viewmode"] = 0; cam["drawmode"] = 2; cam["wireframe"] = 1; cam["shading"] = 0; cam["color"] = 0 }
+  if (between(elapsed, 10, 15)) { cam["viewmode"] = 0; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 0; cam["color"] = 0 }
+  if (between(elapsed, 15, 20)) { cam["viewmode"] = 0; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 1; cam["color"] = 0 }
+  if (between(elapsed, 20, 25)) { cam["viewmode"] = 1; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 1; cam["color"] = 0 }
+  if (between(elapsed, 25, 30)) { cam["viewmode"] = 1; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 1; cam["color"] = 1 }
 }
