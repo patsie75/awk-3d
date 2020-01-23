@@ -6,7 +6,11 @@ function shade(col, shades, percent, gradients,    rgb, i) {
   if (split(col, rgb, ";") == 3) {
     delete gradients
     for (i=1; i<=shades; i++) {
-      gradients[i] = sprintf("%s;%s;%s", int(rgb[1] - (rgb[1]*(darkness/100)*i/shades)), int(rgb[2] - (rgb[2]*(darkness/100)*i/shades)), int(rgb[3] - (rgb[3]*(darkness/100)*i/shades)) )
+      gradients[i] = sprintf("%s;%s;%s", \
+        int(rgb[1] - (rgb[1] * (darkness/100) * i/shades)), \
+        int(rgb[2] - (rgb[2] * (darkness/100) * i/shades)), \
+        int(rgb[3] - (rgb[3] * (darkness/100) * i/shades)) \
+      )
     }
     gradients[0] = shades
   } else return -1

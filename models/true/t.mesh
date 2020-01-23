@@ -1,0 +1,54 @@
+## T
+
+var white 7
+var red 1
+var blue 4
+
+## front
+vert  -25  -25   -5
+vert   25  -25   -5
+vert  -25  -15   -5
+vert   -5  -15   -5
+vert    5  -15   -5
+vert   25  -15   -5
+vert   -5   25   -5
+vert    5   25   -5
+
+## back
+vert  -25  -25    5
+vert   25  -25    5
+vert  -25  -15    5
+vert   -5  -15    5
+vert    5  -15    5
+vert   25  -15    5
+vert   -5   25    5
+vert    5   25    5
+
+## top
+tri    3    2    1 white
+tri    2    3    6 white
+tri    1   10    9 white
+tri   10    1    2 white
+tri   11   10   14 white
+tri   10   11    9 white
+tri   11    4    3 white
+tri    4   11   12 white
+tri   13    6    5 white
+tri    6   13   14 white
+tri   11    1    9 white
+tri    1   11    3 white
+tri    6   10    2 white
+tri   10    6   14 white
+
+## stem
+tri    7    5    4 white
+tri    5    7    8 white
+tri   15    4   12 white
+tri    4   15    7 white
+tri   16   12   13 white
+tri   12   16   15 white
+tri    8   13    5 white
+tri   13    8   16 white
+tri   15    8    7 white
+tri    8   15   16 white
+

@@ -1,0 +1,337 @@
+## T
+
+var white 7
+var red 1
+var blue 4
+
+## front
+vert -115  -25   -5
+vert  -65  -25   -5
+vert -115  -15   -5
+vert  -95  -15   -5
+vert  -85  -15   -5
+vert  -65  -15   -5
+vert  -95   25   -5
+vert  -85   25   -5
+
+## back
+vert -115  -25    5
+vert  -65  -25    5
+vert -115  -15    5
+vert  -95  -15    5
+vert  -85  -15    5
+vert  -65  -15    5
+vert  -95   25    5
+vert  -85   25    5
+
+## top
+tri    3    2    1 white
+tri    2    3    6 white
+tri    1   10    9 white
+tri   10    1    2 white
+tri   11   10   14 white
+tri   10   11    9 white
+tri   11    4    3 white
+tri    4   11   12 white
+tri   13    6    5 white
+tri    6   13   14 white
+tri   11    1    9 white
+tri    1   11    3 white
+tri    6   10    2 white
+tri   10    6   14 white
+
+## stem
+tri    7    5    4 white
+tri    5    7    8 white
+tri   15    4   12 white
+tri    4   15    7 white
+tri   16   12   13 white
+tri   12   16   15 white
+tri    8   13    5 white
+tri   13    8   16 white
+tri   15    8    7 white
+tri    8   15   16 white
+
+## R
+
+var red   1
+var blue  4
+var white 7
+
+vert  -55  -25   -5
+vert  -15  -25   -5
+vert  -45  -15   -5
+vert  -15  -15   -5
+vert   -5  -15   -5
+vert  -45   -5   -5
+vert  -15   -5   -5
+vert   -5   -5   -5
+vert  -45    5   -5
+vert  -25    5   -5
+vert  -15    5   -5
+vert  -55   25   -5
+vert  -45   25   -5
+vert  -15   25   -5
+vert   -5   25   -5
+
+vert  -55  -25    5
+vert  -15  -25    5
+vert  -45  -15    5
+vert  -15  -15    5
+vert   -5  -15    5
+vert  -45   -5    5
+vert  -15   -5    5
+vert   -5   -5    5
+vert  -45    5    5
+vert  -25    5    5
+vert  -15    5    5
+vert  -55   25    5
+vert  -45   25    5
+vert  -15   25    5
+vert   -5   25    5
+
+## front
+tri   17   20   18 white
+tri   20   17   19 white
+tri   20   21   18 white
+tri   23   21   20 white
+tri   21   23   24 white
+tri   27   24   23 white
+tri   25   23   22 white
+tri   23   25   27 white
+tri   28   19   17 white
+tri   19   28   29 white
+tri   30   27   26 white
+tri   27   30   31 white
+
+## sides
+tri   32   18   33 white
+tri   18   32   17 white
+tri   21   33   18 white
+tri   33   21   36 white
+tri   24   36   21 white
+tri   36   24   39 white
+tri   27   39   24 white
+tri   39   27   42 white
+tri   31   42   27 white
+tri   42   31   46 white
+tri   30   46   31 white
+tri   46   30   45 white
+tri   45   26   41 white
+tri   26   45   30 white
+tri   41   25   40 white
+tri   25   41   26 white
+tri   29   40   25 white
+tri   40   29   44 white
+tri   44   28   43 white
+tri   28   44   29 white
+tri   43   17   32 white
+tri   17   43   28 white
+tri   22   34   19 white
+tri   34   22   37 white
+tri   35   19   34 white
+tri   19   35   20 white
+tri   38   20   35 white
+tri   20   38   23 white
+tri   23   37   22 white
+tri   37   23   38 white
+
+## back
+tri   44   32   34 white
+tri   32   44   43 white
+tri   33   34   32 white
+tri   34   33   35 white
+tri   36   35   33 white
+tri   39   35   36 white
+tri   35   39   38 white
+tri   42   38   39 white
+tri   42   37   38 white
+tri   37   42   40 white
+tri   46   41   42 white
+tri   41   46   45 white
+
+##
+## Red TRUE logo
+##
+
+var red 1
+var blue 4
+var white 7
+
+## left
+vert    5   15   -5
+vert    5  -25   -5
+vert   15  -25   -5
+vert   15   10   -5
+
+## right
+vert   45   10   -5
+vert   45  -25   -5
+vert   55  -25   -5
+vert   55   15   -5
+
+## bottom
+vert   20   25   -5
+vert   20   15   -5
+vert   40   15   -5
+vert   40   25   -5
+ 
+## left back 
+vert    5   15    5
+vert    5  -25    5
+vert   15  -25    5
+vert   15   10    5
+
+## right back
+vert   45   10    5
+vert   45  -25    5
+vert   55  -25    5
+vert   55   15    5
+
+## bottom back
+vert   20   25    5
+vert   20   15    5
+vert   40   15    5
+vert   40   25    5
+
+
+## left
+tri   47   49   48 white
+tri   49   47   50 white
+tri   59   48   60 white
+tri   48   59   47 white
+tri   62   60   61 white
+tri   60   62   59 white
+tri   50   61   49 white
+tri   61   50   62 white
+
+tri   48   61   60 white
+tri   61   48   49 white
+
+## right
+tri   51   53   52 white
+tri   53   51   54 white
+tri   63   52   64 white
+tri   52   63   51 white
+tri   66   64   65 white
+tri   64   66   63 white
+tri   54   65   53 white
+tri   65   54   66 white
+
+tri   52   65   64 white
+tri   65   52   53 white
+
+## bottom
+tri   55   57   56 white
+tri   57   55   58 white
+tri   70   68   69 white
+tri   68   70   67 white
+
+tri   56   69   68 white
+tri   69   56   57 white
+tri   67   58   55 white
+tri   58   67   70 white
+
+## left-U
+tri   55   50   47 white
+tri   50   55   56 white
+tri   67   47   59 white
+tri   47   67   55 white
+
+tri   68   59   62 white
+tri   59   68   67 white
+tri   56   62   50 white
+tri   62   56   68 white
+
+## right-U
+tri   51   58   54 white
+tri   58   51   57 white
+tri   69   51   63 white
+tri   51   69   57 white
+
+tri   66   69   63 white
+tri   69   66   70 white
+tri   58   66   54 white
+tri   66   58   70 white
+
+##
+## Red TRUE logo
+##
+
+var red 1
+
+## top 
+vert   65  -25   -5
+vert  115  -25   -5
+vert  115  -15   -5
+vert   65  -15   -5
+
+vert   65  -25    5
+vert  115  -25    5
+vert  115  -15    5
+vert   65  -15    5
+
+# middle
+vert   65   -5   -5
+vert  115   -5   -5
+vert  115    5   -5
+vert   65    5   -5
+
+vert   65   -5    5
+vert  115   -5    5
+vert  115    5    5
+vert   65    5    5
+
+# bottom
+vert   65   15   -5
+vert  115   15   -5
+vert  115   25   -5
+vert   65   25   -5
+
+vert   65   15    5
+vert  115   15    5
+vert  115   25    5
+vert   65   25    5
+
+## top
+tri   71   74   72 red
+tri   72   74   73 red
+tri   75   71   76 red
+tri   76   71   72 red
+tri   78   75   77 red
+tri   77   75   76 red
+tri   74   78   73 red
+tri   73   78   77 red
+tri   72   73   76 red
+tri   76   73   77 red
+tri   75   78   71 red
+tri   71   78   74 red
+
+## middle
+tri   79   82   80 red
+tri   80   82   81 red
+tri   83   79   84 red
+tri   84   79   80 red
+tri   86   83   85 red
+tri   85   83   84 red
+tri   82   86   81 red
+tri   81   86   85 red
+tri   80   81   84 red
+tri   84   81   85 red
+tri   83   86   79 red
+tri   79   86   82 red
+
+## bottom
+tri   87   90   88 red
+tri   88   90   89 red
+tri   91   87   92 red
+tri   92   87   88 red
+tri   94   91   93 red
+tri   93   91   92 red
+tri   90   94   89 red
+tri   89   94   93 red
+tri   88   89   92 red
+tri   92   89   93 red
+tri   91   94   87 red
+tri   87   94   90 red
+
