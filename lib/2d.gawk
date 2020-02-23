@@ -15,8 +15,9 @@ function pixel(scr, x, y, col,   x0,y0) {
 
   x0 = int(x+0.0001)
   y0 = int(y+0.0001)
-  if ((0 <= x0 && x0 < scr["width"]) && (0 <= y0 && y0 < scr["height"]))
+  if ((0 <= x0 && x0 < scr["width"]) && (0 <= y0 && y0 < scr["height"])) {
     scr[y0*scr["width"] + x0] = col
+  }
 }
 
 ## Draw a horizontal line from (x1,y1) and length len

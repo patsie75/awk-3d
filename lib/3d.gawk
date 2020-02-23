@@ -122,7 +122,6 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
   # drawmode, edges or vertices
   if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)) {
     delete mesh["painter"]
-    mesh["painter"][0] = ""
 
     for (t=1; t<=mesh["tris"]; t++) {
       v1 = mesh["tri"][t][1]
@@ -165,8 +164,9 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
       if ( cam["drawmode"] == 3 ) {
         fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
       } else {
-        if (cam["wireframe"]) 
+        if (cam["wireframe"]) {
           triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub])
+        }
       }
     }
 
