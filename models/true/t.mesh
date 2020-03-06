@@ -1,8 +1,9 @@
+##
 ## T
+##
 
-var white 7
 var red 1
-var blue 4
+var white 7
 
 ## front
 vert  -25  -25   -5
