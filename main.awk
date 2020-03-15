@@ -48,6 +48,7 @@ BEGIN {
   #loadmesh(mesh, "models/dodecahedron.mesh")
   #loadmesh(mesh, "models/icosahedron.mesh")
   loadmesh(mesh, "models/true/true.mesh")
+  #loadmesh(mesh, "models/plane/plane.mesh")
 
   ##
   ## main loop
@@ -89,4 +90,5 @@ function animate(starttime) {
   if (between(elapsed, 15, 20)) { cam["viewmode"] = 0; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 1; cam["color"] = 0 }
   if (between(elapsed, 20, 25)) { cam["viewmode"] = 1; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 1; cam["color"] = 0 }
   if (between(elapsed, 25, 30)) { cam["viewmode"] = 1; cam["drawmode"] = 3; cam["wireframe"] = 0; cam["shading"] = 1; cam["color"] = 1 }
+  if (elapsed > 35) exit 0
 }

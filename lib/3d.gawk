@@ -122,6 +122,7 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
   # drawmode, edges or vertices
   if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)) {
     delete mesh["painter"]
+    mesh["painter"][1] = ""
 
     for (t=1; t<=mesh["tris"]; t++) {
       v1 = mesh["tri"][t][1]
