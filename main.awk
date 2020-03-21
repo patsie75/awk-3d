@@ -10,14 +10,19 @@ BEGIN {
   } else {
     "tput cols"  | getline width
     "tput lines" | getline height
-    if (!w || !h)
-      w = 80; h = 24
+    close("tput cols")
+    close("tput lines")
+    if (!width || !height) {
+      width = 80
+      height = 24
+    }
   }
+  ## two pixels per lines
   height = (height-1) * 2
 
   ## initialize screen buffer
-  #width = 85
-  #height = 80
+  width = 120
+  height = 70
   init(scr, width,height)
 
   f["interval"] = 0.5
@@ -47,8 +52,9 @@ BEGIN {
   #loadmesh(mesh, "models/octohedron.mesh")
   #loadmesh(mesh, "models/dodecahedron.mesh")
   #loadmesh(mesh, "models/icosahedron.mesh")
-  loadmesh(mesh, "models/true/true.mesh")
+  #loadmesh(mesh, "models/true/true.mesh")
   #loadmesh(mesh, "models/plane/plane.mesh")
+  loadmesh(mesh, "models/hypercube/hypercube.mesh")
 
   ##
   ## main loop
@@ -56,19 +62,22 @@ BEGIN {
   cursor("off")
   start = myTime()
 
+#  cam["angle"]["x"] = 3.4;
+#  cam["angle"]["y"] += 0.1;
+
   while ("awk" != "difficult") {
 #  while (framenr++ < 500) {
-    cam["angle"]["x"] += 0.01;     # spin on x-axis
-    cam["angle"]["y"] += 0.05;     # spin on y-axis
+    cam["angle"]["x"] += 0.02;     # spin on x-axis
+    cam["angle"]["y"] += 0.01;     # spin on y-axis
     cam["angle"]["z"] += 0.03;     # spin on z-axis
 
-    cam["loc"]["x"] = cos(cam["angle"]["z"]) * width / 4
-    cam["loc"]["y"] = sin(cam["angle"]["y"]) * height / 4
+    cam["loc"]["x"] = cos(cam["angle"]["x"]) * width / 2
+    cam["loc"]["y"] = sin(cam["angle"]["y"]) * height / 8
 
     clear(scr)
     animate(start)
     drawmesh(scr, mesh, cam)
-    draw(scr, 0,0)
+    draw(scr)
     printf("\033[H%.2fFPS", fps(f))
     system("sleep 0.01")
   }

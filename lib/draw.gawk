@@ -1,5 +1,12 @@
 #!/usr/bin/gawk -f
 
+BEGIN {
+  "tput cols"  | getline terminal["width"]
+  "tput lines" | getline terminal["height"]
+  close("tput cols")
+  close("tput lines")
+}
+
 ## initialize and clear canvas
 function init(scr, width, height) {
   scr["width"] = width
@@ -28,10 +35,13 @@ function fill(scr, col,   i, size) {
 }
 
 ## Draw "canvas" onto the terminal
-function draw(scr, xpos,ypos,    x,y,ywidth,y2width,buf) {
-  # put clear screen in screen buffer
-  #buf = "\033[2J\033[H"
-  buf = "\033[H"
+function draw(scr, xpos,ypos,    x,y,ywidth,y2width,buf,pix) {
+  ## set pixel
+  #pix = sprintf("%c", 0x2592) ## utf8 Medium Shade
+  pix = sprintf("%c", 0x2580) ## utf8 Upper Half Block
+
+  # clear buffer
+  buf = ""
 
   w = scr["width"]
   h = scr["height"]
@@ -39,28 +49,31 @@ function draw(scr, xpos,ypos,    x,y,ywidth,y2width,buf) {
   prevfg = -1
   prevbg = -1
 
+  # position of zero means center
+  if (xpos == 0) xpos = int((terminal["width"] - w) / 2)+1
+  if (ypos == 0) ypos = int((terminal["height"] - h/2) / 2)+1
+
+  # negative position means right aligned
+  if (xpos < 0) xpos = (terminal["width"] - w + (xpos+2))
+  if (ypos < 0) ypos = (terminal["height"] - h/2 + (ypos+1))
+
   # for each line
   for (y=0; y<h; y+=2) {
     ywidth = y*w
     y2width = (y+1)*w
-    buf = buf sprintf("\033[%s;%sH", (y/2)+ypos+1, xpos+1)
+    buf = buf sprintf("\033[%s;%sH", (y/2)+ypos, xpos)
 
     # for each pixel in line
     for (x=0; x<w; x++) {
       fg = scr[ywidth+x]
       bg = scr[y2width+x]
       if ((fg != prevfg) || (bg != prevbg))
-        #buf = buf sprintf("\033[%d;%dm%s", fg+30, bg+40, "▀")
-        #buf = buf sprintf("\033[38;5;%dm\033[48;5;%dm%s", fg, bg, "▀")
-        buf = buf sprintf("\033[38;2;%s;48;2;%sm%s", fg, bg, "▀")
+        buf = buf sprintf("\033[38;2;%s;48;2;%sm%c", fg, bg, pix)
       else
-        buf = buf "▀"
+        buf = buf pix
       prevfg = fg
       prevbg = bg
     }
-
-#    # end of line
-#    buf = buf "\n"
   }
 
   # draw buffer to screen and reset colors

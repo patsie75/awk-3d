@@ -66,10 +66,14 @@ function triangle(src, x1,y1, x2,y2, x3,y3, col) {
 }
 
 function fillTriangle(scr, x1,y1, x2,y2, x3,y3, col, type,    i, d1,d2,d3, sx,ex) {
+  if ((x1 < 0) && (x2 < 0) && (x3 < 0)) return
+  if ((y1 < 0) && (y2 < 0) && (y3 < 0)) return
+  if ((x1 > scr["width"]) && (x2 > scr["width"]) && (x3 > scr["width"])) return
+  if ((y1 > scr["height"]) && (y2 > scr["height"]) && (y3 > scr["height"])) return
+
   # y1 < y2 < y3
   if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
   if (y3 < y2) { i=y2; y2=y3; y3=i; i=x2; x2=x3; x3=i }
-  if (y3 < y1) { i=y1; y1=y3; y3=i; i=x1; x1=x3; x3=i }
   if (y2 < y1) { i=y1; y1=y2; y2=i; i=x1; x1=x2; x2=i }
 
   # get delta/slopes

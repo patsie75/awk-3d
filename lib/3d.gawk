@@ -122,12 +122,18 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
   # drawmode, edges or vertices
   if ((cam["drawmode"] == 3) || (cam["drawmode"] == 2)) {
     delete mesh["painter"]
-    mesh["painter"][1] = ""
+    mesh["painter"][-1] = ""
 
     for (t=1; t<=mesh["tris"]; t++) {
       v1 = mesh["tri"][t][1]
       v2 = mesh["tri"][t][2]
       v3 = mesh["tri"][t][3]
+
+      ## border check
+      if ( (xpos[v1] < 0) && (xpos[v2] < 0) && (xpos[v3] < 0) ) continue
+      if ( (ypos[v1] < 0) && (ypos[v2] < 0) && (ypos[v3] < 0) ) continue
+      if ( (xpos[v1] > scr["width"]) && (xpos[v2] > scr["width"]) && (xpos[v3] > scr["width"]) ) continue
+      if ( (ypos[v1] > scr["height"]) && (ypos[v2] > scr["height"]) && (ypos[v3] > scr["height"]) ) continue
 
       vector(line1, xpos[v2]-xpos[v1], ypos[v2]-ypos[v1], zpos[v2]-zpos[v1])
       vector(line2, xpos[v3]-xpos[v1], ypos[v3]-ypos[v1], zpos[v3]-zpos[v1])
@@ -138,6 +144,7 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
         assign(n, mesh, "tri,"t",normal")
         mesh["painter"][t] = (zpos[v1] + zpos[v2] + zpos[v3]) / 3
       }
+
     }
 
     ## sort in decending order of values for painters algorithm
@@ -146,27 +153,29 @@ function drawmesh(scr, mesh, cam,    v, dx,dy,dz, zx,zy,yx,yz,xy,xz, px,py, v1,v
 
     ## draw in order of painters algorithm (back to front)
     for (t in mesh["painter"]) {
-      v1 = mesh["tri"][t][1]
-      v2 = mesh["tri"][t][2]
-      v3 = mesh["tri"][t][3]
+      if (t in mesh["tri"]) {
+        v1 = mesh["tri"][t][1]
+        v2 = mesh["tri"][t][2]
+        v3 = mesh["tri"][t][3]
 
-      ## color or greyscale
-      if ( cam["color"] )
-        colpri = mesh["tri"][t]["color"]
-      else
-        colpri = 7
+        ## color or greyscale
+        if ( cam["color"] )
+          colpri = mesh["tri"][t]["color"]
+        else
+          colpri = 7
 
-      ## shading or no shading
-      if ( cam["shading"] )
-        colsub = colors[colpri][0] - int( abs(mesh["tri"][t]["normal"]["z"]) * colors[colpri][0] )
-      else
-        colsub = "1"
+        ## shading or no shading
+        if ( cam["shading"] )
+          colsub = colors[colpri][0] - int( abs(mesh["tri"][t]["normal"]["z"] + 0.5) * colors[colpri][0] )
+        else
+          colsub = "1"
 
-      if ( cam["drawmode"] == 3 ) {
-        fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
-      } else {
-        if (cam["wireframe"]) {
-          triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub])
+        if ( cam["drawmode"] == 3 ) {
+          fillTriangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub] )
+        } else {
+          if (cam["wireframe"]) {
+            triangle(scr, xpos[v1],ypos[v1], xpos[v2],ypos[v2], xpos[v3],ypos[v3], colors[colpri][colsub])
+          }
         }
       }
     }
