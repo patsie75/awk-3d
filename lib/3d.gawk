@@ -20,7 +20,7 @@ function variable(value, vararr,   v, neg) {
   # return variable content or 0
   if (v in vararr)
     return neg ? -vararr[v] : vararr[v]
-  else return 0
+  else return v
 }
 
 
@@ -35,6 +35,12 @@ function loadmesh(mesh, file,   var, linenr, v, e, t) {
       if ($1 == "var") {
         if (NF == 3) var[$2] = $3
         else printf("Error line #%d: syntax error: \"var <variable> <value>\"\n", linenr)
+
+      } else if ($1 == "col") {
+        if (NF == 3) {
+          shade($3, nrshades, darkness, gradients)
+          assign(gradients, colors, $2)
+	}
 
       } else if ($1 == "vert") {
         if (NF == 4) {
