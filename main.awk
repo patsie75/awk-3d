@@ -21,8 +21,8 @@ BEGIN {
   height = (height-1) * 2
 
   ## initialize screen buffer
-  width = 120
-  height = 70
+  #width = 120
+  #height = 70
   init(scr, width,height)
 
   f["interval"] = 0.5
@@ -55,7 +55,7 @@ BEGIN {
   #loadmesh(mesh, "models/true/true.mesh")
   #loadmesh(mesh, "models/plane/plane.mesh")
   #loadmesh(mesh, "models/hypercube/hypercube.mesh")
-  loadmesh(mesh, "models/obj/cutcube2.mesh")
+  loadmesh(mesh, "models/obj/starwest.mesh")
 
   ##
   ## main loop
@@ -63,21 +63,21 @@ BEGIN {
   cursor("off")
   start = myTime()
 
-#  cam["angle"]["x"] = 3.4;
+  cam["angle"]["x"] = 1.7;
 #  cam["angle"]["y"] += 0.1;
 
-#  while ("awk" != "difficult") {
-  while (framenr++ < 500) {
-    cam["angle"]["x"] += 0.02;     # spin on x-axis
-    cam["angle"]["y"] += 0.01;     # spin on y-axis
-    cam["angle"]["z"] += 0.03;     # spin on z-axis
+  while ("awk" != "difficult") {
+#  while (framenr++ < 500) {
+    #cam["angle"]["x"] += 0.02;     # spin on x-axis
+    #cam["angle"]["y"] += 0.02;     # spin on y-axis
+    cam["angle"]["z"] += 0.02;     # spin on z-axis
 
-    cam["loc"]["x"] = cos(cam["angle"]["x"]) * width / 2
-    cam["loc"]["y"] = sin(cam["angle"]["x"]) * height / 8
+    cam["angle"]["x"] = cos(cam["angle"]["z"])/2 + 1.7
+    #cam["loc"]["y"] = sin(cam["angle"]["x"]) * height / 8
     #cam["angle"]["y"] = sin(cam["angle"]["x"]) 
 
     clear(scr)
-    animate(start)
+#    animate(start)
     drawmesh(scr, mesh, cam)
     draw(scr)
     printf("\033[H%.2fFPS", fps(f))
