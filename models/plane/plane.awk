@@ -3,11 +3,11 @@
 BEGIN {
   srand()
 
-  maxx = 30	# number of x vertices
-  maxz = 10	# number of z vertices
+  maxx = 20	# number of x vertices
+  maxz = 20	# number of z vertices
 
-  widthx = 5	# width between x vertices
-  widthz = 5	# width between z vertices
+  widthx = 10	# width between x vertices
+  widthz = 10	# width between z vertices
   height = 5	# height (y vertices)
 
   col = 7	# color of triangles
