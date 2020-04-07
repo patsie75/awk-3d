@@ -18,11 +18,19 @@ BEGIN {
 ## skip previous headers placed
 /# MESH file created with meshtool.awk/ { next }
 
+{ 
+  # convert DOS newlines to unix
+  sub(//, "")
+}
+
 ## Read color information from mtllib file (part of .obj file)
 ($1 == "mtllib") {
   fname = $2
   while ((getline < fname) > 0) {
-    if ($1 == "newmtl") mtl = $2
+    sub(//, "")
+    if ($1 == "newmtl") {
+      mtl = $2
+    }
     if ($1 == "Kd") {
       color[mtl] = int($2 * 255) ";" int($3 * 255) ";" int($4 * 255)
       printf("col %-20s %s\n", mtl, color[mtl])
@@ -73,6 +81,10 @@ BEGIN {
 
 ## print triangles/faces
 ($1 == "f") || ($1 == "tri") {
+  sub(/\/.*/, "", $2)
+  sub(/\/.*/, "", $3)
+  sub(/\/.*/, "", $4)
+
   ## handle merging of two files
   if (FNR != NR) {
     $2 += voffset
