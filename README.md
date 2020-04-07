@@ -23,4 +23,4 @@ This is a first attempt to draw things in 3D space, so I hope to spend some more
 Here's a screenshot:<br>
 ![](https://raw.githubusercontent.com/patsie75/awk-3d/master/icosahedron.png)
 
-See youtube for a moving example: https://youtu.be/BFwzQISqTy4 or https://youtu.be/cNM4f10IZWQ
+See youtube for a moving example: https://youtu.be/snj8Nl8pC6E or https://youtu.be/cNM4f10IZWQ
