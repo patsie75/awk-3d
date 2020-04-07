@@ -96,6 +96,10 @@ BEGIN {
   next
 }
 
+($1 == "col") {
+  printf("col %-20s %s\n", $2, $3)
+}
+
 ## print comments and emtpy lines
 /^[[:space:]]*(#|$)/
 
